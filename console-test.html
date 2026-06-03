@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Console Test</title>
+</head>
+<body>
+    <h1>Откройте консоль (F12)</h1>
+    <p>Там увидите результаты проверки</p>
+
+    <script>
+        console.log('=== НАЧАЛО ПРОВЕРКИ ===');
+
+        // Проверка 1: Загрузка скриптов
+        console.log('1. Проверка скриптов...');
+
+        // Проверка 2: Класс App
+        setTimeout(() => {
+            try {
+                console.log('2. Проверка класса App...');
+                console.log('typeof App:', typeof App);
+                console.log('typeof window.App:', typeof window.App);
+            } catch(e) {
+                console.error('Ошибка при проверке App:', e);
+            }
+        }, 100);
+
+        // Проверка 3: После загрузки всех скриптов
+        setTimeout(() => {
+            try {
+                console.log('3. Проверка app instance...');
+                console.log('typeof app:', typeof app);
+                console.log('typeof window.app:', typeof window.app);
+
+                if (window.app) {
+                    console.log('4. Проверка сценариев...');
+                    console.log('app.scenarios:', window.app.scenarios);
+                    console.log('Длина сценариев:', window.app.scenarios ? window.app.scenarios.length : 'undefined');
+
+                    if (window.app.scenarios && window.app.scenarios.length > 0) {
+                        console.log('✅ ПЕРВЫЙ СЦЕНАРИЙ:', window.app.scenarios[0]);
+                    } else {
+                        console.error('❌ Сценарии пустые!');
+                    }
+                }
+            } catch(e) {
+                console.error('Ошибка:', e);
+                console.error('Stack:', e.stack);
+            }
+        }, 500);
+
+        console.log('=== КОНЕЦ ПРОВЕРКИ ===');
+    </script>
+
+    <script src="js/ITSM365_INFO.js"></script>
+    <script src="js/speech.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug ITSM365 Trainer</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        .error { color: red; }
+        .success { color: green; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug: ITSM365 Trainer</h1>
+    <div id="output"></div>
+
+    <script>
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `debug ${type}`;
+            div.textContent = message;
+            document.getElementById('output').appendChild(div);
+        }
+
+        log('Проверка загрузки файлов...', 'info');
+
+        // Проверка 1: Загружается ли app.js
+        try {
+            log('✅ HTML загружен', 'success');
+        } catch (e) {
+            log('❌ Ошибка HTML: ' + e.message, 'error');
+        }
+
+        // Проверка 2: Подключение файлов
+        const scripts = document.getElementsByTagName('script');
+        log(`Найдено скриптов: ${scripts.length}`, 'info');
+
+        // Проверка 3: DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            log('✅ DOMContentLoaded сработал', 'success');
+
+            // Проверка 4: App класс
+            setTimeout(() => {
+                try {
+                    if (typeof window.App === 'undefined') {
+                        log('❌ Класс App не определён', 'error');
+                        log('Проверьте что app.js загружен', 'error');
+                    } else {
+                        log('✅ Класс App определён', 'success');
+                    }
+
+                    if (typeof window.app === 'undefined') {
+                        log('❌ Экземпляр app не создан', 'error');
+                    } else {
+                        log('✅ Экземпляр app создан', 'success');
+
+                        if (window.app.scenarios) {
+                            log(`✅ Сценариев загружено: ${window.app.scenarios.length}`, 'success');
+
+                            if (window.app.scenarios.length === 0) {
+                                log('❌ НОЛЬ СЦЕНАРИЕВ! Метод loadScenarios() пустой!', 'error');
+                            } else {
+                                log(`Первый сценарий: ${window.app.scenarios[0].title}`, 'success');
+                            }
+                        } else {
+                            log('❌ Свойство scenarios не существует', 'error');
+                        }
+                    }
+                } catch (e) {
+                    log('❌ Ошибка: ' + e.message, 'error');
+                    log('Stack: ' + e.stack, 'error');
+                }
+            }, 100);
+        });
+    </script>
+
+    <!-- Теперь загружаем скрипты -->
+    <script src="js/ITSM365_INFO.js" onerror="log('❌ Ошибка загрузки ITSM365_INFO.js', 'error')"></script>
+    <script src="js/speech.js" onerror="log('❌ Ошибка загрузки speech.js', 'error')"></script>
+    <script src="js/ai.js" onerror="log('❌ Ошибка загрузки ai.js', 'error')"></script>
+    <script src="js/app.js" onerror="log('❌ Ошибка загрузки app.js', 'error')"></script>
+</body>
+</html>

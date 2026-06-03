@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест тренажёра</title>
+</head>
+<body>
+    <h1>Тест загрузки сценариев</h1>
+    <div id="result"></div>
+
+    <script src="js/app.js"></script>
+    <script>
+        const app = new App();
+
+        // Проверяем сценарии
+        const scenariosCount = app.scenarios.length;
+        const firstScenario = app.scenarios[0];
+
+        document.getElementById('result').innerHTML = `
+            <p><strong>Сценариев загружено:</strong> ${scenariosCount}</p>
+            <p><strong>Первый сценарий:</strong> ${firstScenario ? firstScenario.title : 'Нет'}</p>
+            <pre>${JSON.stringify(firstScenario, null, 2)}</pre>
+        `;
+    </script>
+</body>
+</html>

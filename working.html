@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITSM365 Тренажёр (Working Version)</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">365</div>
+                <h1 class="logo-text">ITSM365</h1>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn active" onclick="showView('scenarios')">Сценарии</button>
+                <button class="nav-btn" onclick="showView('resources')">Материалы</button>
+                <button class="nav-btn" onclick="showView('stats')">Прогресс</button>
+            </nav>
+        </header>
+
+        <main class="main">
+            <section id="scenarios-view" class="view active">
+                <div class="container">
+                    <h2 class="page-title">Выберите сценарий</h2>
+
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label class="filter-label">Категория:</label>
+                            <select id="category-filter" class="filter-select" onchange="renderScenarios()">
+                                <option value="all">Все категории</option>
+                                <option value="demo">🎯 Демонстрация</option>
+                                <option value="objections">🛡️ Работа с возражениями</option>
+                                <option value="closing">💰 Закрытие сделки</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Сложность:</label>
+                            <select id="difficulty-filter" class="filter-select" onchange="renderScenarios()">
+                                <option value="all">Все уровни</option>
+                                <option value="beginner">Начальный</option>
+                                <option value="intermediate">Средний</option>
+                                <option value="advanced">Продвинутый</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="scenarios-list" class="scenarios-grid"></div>
+                </div>
+            </section>
+
+            <section id="resources-view" class="view">
+                <div class="resources-container">
+                    <h2 class="page-title">📚 Материалы для менеджеров</h2>
+                    <p style="text-align: center; padding: 40px;">Раздел в разработке. Скоро здесь будет информация о продукте ITSM365.</p>
+                </div>
+            </section>
+
+            <section id="stats-view" class="view">
+                <div class="stats-container">
+                    <h2 class="page-title">📈 Ваш прогресс</h2>
+                    <p style="text-align: center; padding: 40px;">Статистика будет доступна после завершения тренировок.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // ==========================================
+        // ВСТРОЕННЫЕ СЦЕНАРИИ (всего 28 штук)
+        // ==========================================
+        const ALL_SCENARIOS = [
+            // ==========================================
+            // Демонстрации (15 сценариев)
+            // ==========================================
+            {
+                id: 'demo-banking-advanced',
+                category: 'demo',
+                difficulty: 'advanced',
+                title: 'Демо ITSM365 для CIO банка',
+                description: 'Провести демонстрацию для Ивана, CIO крупного банка. Ключевые боли: SLA не выполняются, инциденты теряются, нужны отчёты для правления.',
+                client_profile: { name: 'Иван', role: 'CIO', company: 'Комерческий банк "Солид"' }
+            },
+            {
+                id: 'demo-telecom-intermediate',
+                category: 'demo',
+                difficulty: 'intermediate',
+                title: 'Демо для телеком-оператора',
+                description: 'Демонстрация для Марии, IT Director телеком-оператора. Основной фокус на автоматизацию обработки инцидентов и отчётность.',
+                client_profile: { name: 'Мария', role: 'IT Director', company: 'Телеком "Связь-Плюс"' }
+            },
+            {
+                id: 'demo-retail-beginner',
+                category: 'demo',
+                difficulty: 'beginner',
+                title: 'Демо для ритейл сети',
+                description: 'Демонстрация для Ольги, Helpdesk Manager сети магазинов "Свой". Фокус на самообслуживание и мобильное приложение.',
+                client_profile: { name: 'Ольга', role: 'Helpdesk Manager', company: 'Сеть магазинов "Свой"' }
+            },
+            {
+                id: 'demo-horeca-intermediate',
+                category: 'demo',
+                difficulty: 'intermediate',
+                title: 'Демо для ресторанного бизнеса',
+                description: 'Демонстрация для Сергея, IT Manager сети ресторанов. Специфика - работа 24/7, сезонность, много фронт-офиса.',
+                client_profile: { name: 'Сергей', role: 'IT Manager', company: 'Ресторанная группа "Вкус"' }
+            },
+            {
+                id: 'demo-integrator-advanced',
+                category: 'demo',
+                difficulty: 'advanced',
+                title: 'Демо для ИТ-интегратора',
+                description: 'Продажа ИТ-интегратору который будет внедрять ITSM365 у своих клиентов. B2B2C модель.',
+                client_profile: { name: 'Андрей', role: 'Руководитель внедрений', company: 'ИТ-интегратор "ТехноПро"' }
+            },
+            {
+                id: 'demo-industrial-intermediate',
+                category: 'demo',
+                difficulty: 'intermediate',
+                title: 'Демо для производственного предприятия',
+                description: 'Демонстрация для Владимира, IT Director завода. Специфика - критичные производственные системы, сложная структура.',
+                client_profile: { name: 'Владимир', role: 'IT Director', company: 'Машиностроительный завод "Прогресс"' }
+            },
+            {
+                id: 'demo-gov-beginner',
+                category: 'demo',
+                difficulty: 'beginner',
+                title: 'Демо для университета',
+                description: 'Демонстрация для Татьяны, начальник ИТ отдела университета. Особенности - бюджет, сроки, гранты.',
+                client_profile: { name: 'Татьяна', role: 'Начальник ИТ отдела', company: 'Государственный технический университет' }
+            },
+            {
+                id: 'first-meeting-cioprom',
+                category: 'demo',
+                difficulty: 'intermediate',
+                title: 'Первая встреча с CIO (ТехноПром)',
+                description: 'Проведение первой встречи с CIO крупной компании. Выявление болей, презентация ITSM365.',
+                client_profile: { name: 'Александр Петров', role: 'CIO', company: 'ТехноПром' }
+            },
+            {
+                id: 'coffee-shop-chain',
+                category: 'demo',
+                difficulty: 'intermediate',
+                title: 'Сеть кофеен (300+ точек)',
+                description: 'Встреча с IT Director сети кофеен по всей России. Поддержка касс, wi-fi, кофемашин.',
+                client_profile: { name: 'Елена Волкова', role: 'IT Director', company: 'КофейнаяРост' }
+            },
+            {
+                id: 'agro-industrial',
+                category: 'demo',
+                difficulty: 'intermediate',
+                title: 'Автоматизация для агропрома',
+                description: 'Встреча с IT Manager агрокомпании по поставкам запчастей в Сибирь.',
+                client_profile: { name: 'Игорь Семенов', role: 'IT Manager', company: 'СибАгроПром' }
+            },
+            {
+                id: 'it-outsource',
+                category: 'demo',
+                difficulty: 'advanced',
+                title: 'ITSM365.Outsource для аутсорсинга',
+                description: 'Презентация для IT-аутсорсинга. Автоматизация работы выездных инженеров и поддержка клиентов.',
+                client_profile: { name: 'Михаил Громов', role: 'CTO', company: 'ТехноСервис' }
+            },
+            {
+                id: 'hr-automation',
+                category: 'demo',
+                difficulty: 'intermediate',
+                title: 'HR-automation для управляющей компании',
+                description: 'Встреча с HR Director по автоматизации подбора персонала.',
+                client_profile: { name: 'Ольга Соколова', role: 'HR Director', company: 'ПрофиИнвест' }
+            },
+            {
+                id: 'it-manager-mid',
+                category: 'demo',
+                difficulty: 'beginner',
+                title: 'Презентация для IT Manager',
+                description: 'Работа с IT Manager, который не является LPR, но влияет на решение.',
+                client_profile: { name: 'Сергей Новиков', role: 'IT Manager', company: 'СтройСервис' }
+            },
+            {
+                id: 'enterprise-holding',
+                category: 'demo',
+                difficulty: 'advanced',
+                title: 'Enterprise-сделка: холдинг',
+                description: 'Сложная сделка с управляющей компанией на внедрение ITSM365 во все дочерние предприятия.',
+                client_profile: { name: 'Владимир Кузнецов', role: 'CEO', company: 'ИнвестХолдинг' }
+            },
+            {
+                id: 'small-business-realestate',
+                category: 'demo',
+                difficulty: 'beginner',
+                title: 'Малый бизнес: агентство недвижимости',
+                description: 'Работа с владельцем агентства недвижимости с ограниченным бюджетом.',
+                client_profile: { name: 'Наталья Морозова', role: 'Owner', company: 'ДомМечты' }
+            },
+
+            // ==========================================
+            // Возражения (6 сценариев)
+            // ==========================================
+            {
+                id: 'objection-price',
+                category: 'objections',
+                difficulty: 'intermediate',
+                title: 'Возражение: "У вас дорого"',
+                description: 'Работа с возражением по цене. Клиент - IT Manager торговой сети сравнивает с 1C.',
+                client_profile: { name: 'Дмитрий', role: 'IT Manager', company: 'Торговая сеть "Продукты"' }
+            },
+            {
+                id: 'objection-competitor',
+                category: 'objections',
+                difficulty: 'advanced',
+                title: 'Возражение: "Выбираем между вами и Naumen"',
+                description: 'Работа с конкурентным возражением. Клиент сравнивает ITSM365 с Naumen.',
+                client_profile: { name: 'Алексей', role: 'Директор ИТ', company: 'Телеком оператор "НетАй"' }
+            },
+            {
+                id: 'objection-timeline',
+                category: 'objections',
+                difficulty: 'intermediate',
+                title: 'Возражение: "Долго внедрять"',
+                description: 'Работа с возражением по срокам. Клиент боится долгого внедрения и простоя бизнеса.',
+                client_profile: { name: 'Максим', role: 'IT Director', company: 'Логистическая компания "Транзит"' }
+            },
+            {
+                id: 'objection-not-needed',
+                category: 'objections',
+                difficulty: 'beginner',
+                title: 'Возражение: "Нам не нужно"',
+                description: 'Работа с возражением "у нас всё работает". Клиент не видит ценности.',
+                client_profile: { name: 'Ирина', role: 'Office Manager', company: 'Небольшая дизайнерская студия' }
+            },
+            {
+                id: 'objection-jira',
+                category: 'objections',
+                difficulty: 'advanced',
+                title: 'Возражение: "У нас есть Jira"',
+                description: 'Работа с возражением о существующей системе (Jira). Клиент использует Atlassian.',
+                client_profile: { name: 'Дмитрий', role: 'Head of IT Operations', company: 'Финтех стартап' }
+            },
+            {
+                id: 'objection-satisfied',
+                category: 'objections',
+                difficulty: 'advanced',
+                title: 'Возражение: "Удовлетворены текущим"',
+                description: 'Работа с клиентом который использует решение конкурента и не видит причин переходить.',
+                client_profile: { name: 'Анна Белова', role: 'CIO', company: 'ФинТех' }
+            },
+
+            // ==========================================
+            // Закрытие (5 сценариев)
+            // ==========================================
+            {
+                id: 'closing-commercial',
+                category: 'closing',
+                difficulty: 'intermediate',
+                title: 'Закрытие: Коммерческое предложение',
+                description: 'Переход к КП после успешной демонстрации. Клиент заинтересован, нужно согласование бюджета.',
+                client_profile: { name: 'Елена', role: 'Руководитель службы поддержки', company: 'Страховая компания "Гарант"' }
+            },
+            {
+                id: 'closing-next-meeting',
+                category: 'closing',
+                difficulty: 'beginner',
+                title: 'Закрытие: Следующая встреча',
+                description: 'Закрытие первого звонка на следующую встречу с командой. Стандартная ситуация.',
+                client_profile: { name: 'Анна', role: 'IT Manager', company: 'Строительная компания "СтройМастер"' }
+            },
+            {
+                id: 'closing-trial',
+                category: 'closing',
+                difficulty: 'intermediate',
+                title: 'Закрытие: Триал / POC',
+                description: 'Закрытие на пилотный проект или trial. Клиент хочет попробовать перед покупкой.',
+                client_profile: { name: 'Павел', role: 'CIO', company: 'Фармацевтическая компания "МедПром"' }
+            },
+            {
+                id: 'negotiation-contract',
+                category: 'closing',
+                difficulty: 'advanced',
+                title: 'Финальные переговоры: условия контракта',
+                description: 'Сложные переговоры с procurement менеджером по условиям контракта.',
+                client_profile: { name: 'Мария Иванова', role: 'Procurement Manager', company: 'ТрансЛогистик' }
+            },
+            {
+                id: 'negotiation-cto',
+                category: 'closing',
+                difficulty: 'advanced',
+                title: 'Переговоры с CTO: техтребования',
+                description: 'Сложные переговоры с техническим директором по техническим требованиям и интеграциям.',
+                client_profile: { name: 'Алексей Смирнов', role: 'CTO', company: 'Банковские Технологии' }
+            }
+        ];
+
+        // ==========================================
+        // ФУНКЦИИ ПРИЛОЖЕНИЯ
+        // ==========================================
+        function showView(viewName) {
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById(viewName + '-view').classList.add('active');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('onclick').includes(viewName));
+            });
+        }
+
+        function getScenarioIcon(category) {
+            const icons = { 'demo': '🎯', 'objections': '🛡️', 'closing': '💰' };
+            return icons[category] || '📋';
+        }
+
+        function getCategoryLabel(category) {
+            const labels = { 'demo': 'Демонстрация', 'objections': 'Возражения', 'closing': 'Закрытие' };
+            return labels[category] || category;
+        }
+
+        function getDifficultyLabel(difficulty) {
+            const labels = { 'beginner': 'Начальный', 'intermediate': 'Средний', 'advanced': 'Продвинутый' };
+            return labels[difficulty] || difficulty;
+        }
+
+        function createScenarioCard(scenario) {
+            const card = document.createElement('div');
+            card.className = 'scenario-card';
+            card.onclick = () => alert('Сценарий: ' + scenario.title + '\n\nЭто демо-версия. Полная функциональность будет доступна после подключения AI API.');
+
+            const icon = getScenarioIcon(scenario.category);
+
+            card.innerHTML = `
+                <div class="scenario-card-header">
+                    <div class="scenario-card-title">${scenario.title}</div>
+                    <div class="scenario-card-icon">${icon}</div>
+                </div>
+                <div class="scenario-card-description">${scenario.description}</div>
+                <div class="scenario-card-meta">
+                    <span class="badge ${scenario.category}">${getCategoryLabel(scenario.category)}</span>
+                    <span class="badge ${scenario.difficulty}">${getDifficultyLabel(scenario.difficulty)}</span>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function renderScenarios() {
+            const list = document.getElementById('scenarios-list');
+            const categoryFilter = document.getElementById('category-filter').value;
+            const difficultyFilter = document.getElementById('difficulty-filter').value;
+
+            let filtered = ALL_SCENARIOS;
+
+            if (categoryFilter !== 'all') {
+                filtered = filtered.filter(s => s.category === categoryFilter);
+            }
+
+            if (difficultyFilter !== 'all') {
+                filtered = filtered.filter(s => s.difficulty === difficultyFilter);
+            }
+
+            list.innerHTML = '';
+
+            filtered.forEach(scenario => {
+                const card = createScenarioCard(scenario);
+                list.appendChild(card);
+            });
+
+            console.log('Загружено сценариев:', filtered.length);
+        }
+
+        // ==========================================
+        // ИНИЦИАЛИЗАЦИЯ
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Приложение загружено');
+            console.log('Всего сценариев:', ALL_SCENARIOS.length);
+            renderScenarios();
+        });
+    </script>
+</body>
+</html>

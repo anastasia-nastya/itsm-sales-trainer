@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITSM365 Тренажёр (Minimal)</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #0066CC; }
+        .scenario-card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .scenario-card:hover { border-color: #0066CC; }
+        .scenario-title { font-weight: bold; margin-bottom: 5px; }
+        .scenario-desc { color: #666; font-size: 14px; }
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; }
+        .badge.demo { background: #E6F0FF; color: #0066CC; }
+        .badge.objections { background: #FEF3C7; color: #D97706; }
+        .badge.closing { background: #D1FAE5; color: #059669; }
+    </style>
+</head>
+<body>
+    <h1>ITSM365 Тренажёр (Minimal Version)</h1>
+    <div id="scenarios"></div>
+
+    <script>
+        // Тестовые сценарии
+        const testScenarios = [
+            {
+                title: 'Тестовый сценарий 1',
+                description: 'Демонстрация для банка',
+                category: 'demo',
+                difficulty: 'advanced'
+            },
+            {
+                title: 'Тестовый сценарий 2',
+                description: 'Возражение по цене',
+                category: 'objections',
+                difficulty: 'intermediate'
+            }
+        ];
+
+        // Рендер
+        const container = document.getElementById('scenarios');
+        testScenarios.forEach(scenario => {
+            const card = document.createElement('div');
+            card.className = 'scenario-card';
+            card.innerHTML = `
+                <div class="scenario-title">${scenario.title}</div>
+                <div class="scenario-desc">${scenario.description}</div>
+                <div>
+                    <span class="badge ${scenario.category}">${scenario.category}</span>
+                    <span class="badge ${scenario.difficulty}">${scenario.difficulty}</span>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+        console.log('Загружено сценариев:', testScenarios.length);
+    </script>
+</body>
+</html>
