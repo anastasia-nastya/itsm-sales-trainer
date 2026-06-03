@@ -458,6 +458,33 @@ body {
     overflow: hidden;
 }
 
+.api-key-section {
+    padding: 12px 20px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.api-key-section small {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.api-link {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.api-link:hover {
+    color: var(--primary-dark);
+}
+
 .chat-messages {
     min-height: 400px;
     max-height: 400px;

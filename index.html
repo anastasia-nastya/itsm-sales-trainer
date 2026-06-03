@@ -153,6 +153,11 @@
                 <div class="chat-container">
                     <div id="chat-messages" class="chat-messages"></div>
 
+                    <div class="api-key-section">
+                        <small id="api-status">🔓 Режим: Базовый (без AI)</small>
+                        <button class="api-link" onclick="addApiKey()">[+ Добавить API ключ]</button>
+                    </div>
+
                     <div class="chat-input-area">
                         <textarea id="user-input" class="chat-input" placeholder="Ваше сообщение..." rows="3"></textarea>
                         <div class="input-actions">
@@ -416,10 +421,19 @@
         }
 
         async function getAIResponse(userMessage) {
+            // Проверяем API ключ
             if (!apiKey) {
-                apiKey = prompt('Введите ваш Groq API ключ (получите бесплатно на console.groq.com):');
-                if (!apiKey) return 'API ключ необходим для работы тренажёра.';
-                localStorage.setItem('groq_api_key', apiKey);
+                // Если ключа нет, возвращаем базовый ответ
+                const basicResponses = [
+                    'Интересно. Расскажите подробнее.',
+                    'А как это работает с нашей текущей инфраструктурой?',
+                    'Сколько времени займёт внедрение?',
+                    'Это звучит дорого. Обоснуйте цену.',
+                    'Нужно обсудить с руководством.',
+                    'Покажите демо конкретного кейса.',
+                    'Какие у вас условия поддержки?',
+                ];
+                return basicResponses[Math.floor(Math.random() * basicResponses.length)];
             }
 
             try {
@@ -445,7 +459,7 @@
                 return data.choices[0].message.content;
             } catch (error) {
                 console.error('AI Error:', error);
-                return 'Извините, произошла ошибка. Попробуйте позже.';
+                return 'Извините, произошла ошибка с AI. Использую базовый режим.';
             }
         }
 
@@ -462,6 +476,14 @@
                 stopRecording();
             } else {
                 startRecording();
+            }
+        }
+
+        function addApiKey() {
+            apiKey = prompt('Введите ваш Groq API ключ для полноценной работы с AI:\n\nПолучите бесплатно на console.groq.com\n\nОставьте пустым для отмены.');
+            if (apiKey) {
+                localStorage.setItem('groq_api_key', apiKey);
+                document.getElementById('api-status').innerHTML = '🔐 Режим: AI (с ключом)';
             }
         }
 
