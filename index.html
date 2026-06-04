@@ -19,6 +19,7 @@
         .cta-button {
             background: #FF6B35; color: white; border: none; padding: 15px 40px;
             font-size: 1.1rem; font-weight: 600; border-radius: 8px; cursor: pointer;
+            transition: background 0.2s;
         }
         .cta-button:hover { background: #e55a2b; }
         .scenario-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
@@ -33,7 +34,9 @@
         .scenario-button {
             width: 100%; padding: 12px; background: #0066CC; color: white;
             border: none; border-radius: 8px; font-weight: 600; cursor: pointer;
+            transition: background 0.2s;
         }
+        .scenario-button:hover { background: #0056b3; }
         .simulation { display: none; }
         .simulation.active { display: block; }
         .sim-header {
@@ -64,7 +67,7 @@
         }
         .chat-input {
             width: 100%; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px;
-            resize: none;
+            resize: none; font-family: inherit;
         }
         .actions { display: flex; gap: 10px; margin-top: 10px; }
         .voice-btn {
@@ -75,10 +78,12 @@
             padding: 10px 24px; background: #0066CC; color: white;
             border: none; border-radius: 8px; font-weight: 600; cursor: pointer;
         }
+        .send-btn:hover { background: #0056b3; }
         .back-btn {
             padding: 8px 16px; background: #F5F7FA; border: 1px solid #E5E7EB;
             border-radius: 6px; cursor: pointer;
         }
+        .back-btn:hover { background: #e5e7eb; }
         .recording {
             position: fixed; bottom: 20px; right: 20px; background: #FF6B35;
             color: white; padding: 12px 20px; border-radius: 30px; display: none;
@@ -89,20 +94,6 @@
             animation: blink 1s infinite;
         }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .feedback-panel {
-            background: white; border: 1px solid #E5E7EB; border-radius: 8px;
-            padding: 15px; margin-top: 20px;
-        }
-        .feedback-header { font-weight: 600; margin-bottom: 10px; color: #1A1A1A; }
-        .feedback-score {
-            display: inline-block; padding: 6px 12px; border-radius: 20px;
-            font-size: 0.85rem; font-weight: 600; margin-bottom: 10px;
-        }
-        .score-excellent { background: #10B981; color: white; }
-        .score-good { background: #3B82F6; color: white; }
-        .score-average { background: #F59E0B; color: white; }
-        .score-poor { background: #EF4444; color: white; }
-        .feedback-tip { font-size: 0.9rem; color: #6B7280; line-height: 1.5; }
         .metrics-panel {
             background: white; border: 1px solid #E5E7EB; border-radius: 8px;
             padding: 15px; margin-bottom: 20px;
@@ -118,64 +109,65 @@
         .grade-3 { color: #F59E0B; }
         .grade-2 { color: #EF4444; }
         .grade-1 { color: #DC2626; }
+        .feedback-tip { font-size: 0.9rem; color: #6B7280; }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Главный экран -->
-        <div class="hero">
+        <div class="hero" id="hero">
             <div class="logo">ITSM 365</div>
             <h1>Тренажёр менеджеров по продажам</h1>
             <p>Практикуйте навыки B2B продаж с AI-клиентами в реалистичных сценариях</p>
-            <button class="cta-button" id="start-btn">🚀 Начать тренировку →</button>
+            <button class="cta-button" id="startButton">🚀 Начать тренировку →</button>
         </div>
 
         <!-- Сценарии -->
         <div id="scenarios" style="display: none;">
             <h2 style="color: #0066CC; margin-bottom: 20px;">Выберите сценарий</h2>
-            <div class="scenario-grid" id="scenario-grid"></div>
+            <div class="scenario-grid" id="scenarioGrid"></div>
         </div>
 
         <!-- Симуляция -->
         <div id="simulation" class="simulation">
             <div class="sim-header">
-                <h2 id="sim-title">Загрузка...</h2>
-                <button class="back-btn" id="back-btn">← Назад</button>
+                <h2 id="simTitle">Загрузка...</h2>
+                <button class="back-btn" id="backButton">← Назад</button>
             </div>
 
             <div class="client-info">
-                <h3 id="client-name">-</h3>
-                <p id="client-role">-</p>
+                <h3 id="clientName">-</h3>
+                <p id="clientRole">-</p>
             </div>
 
             <div class="metrics-panel">
                 <div class="metrics-grid">
                     <div class="metric-item">
-                        <div class="metric-value" id="metric-responses">0</div>
+                        <div class="metric-value" id="metricResponses">0</div>
                         <div class="metric-label">Ответов</div>
                     </div>
                     <div class="metric-item">
-                        <div class="metric-value" id="metric-avg-score">-</div>
+                        <div class="metric-value" id="metricAvgScore">-</div>
                         <div class="metric-label">Средняя оценка</div>
                     </div>
                     <div class="metric-item">
-                        <div class="metric-value" id="metric-best-score">-</div>
+                        <div class="metric-value" id="metricBestScore">-</div>
                         <div class="metric-label">Лучшая оценка</div>
                     </div>
                 </div>
-                <div id="last-response" class="last-response" style="display: none;">
-                    <div id="response-grade" class="response-grade">Последний ответ: -</div>
-                    <div id="response-feedback" class="feedback-tip">-</div>
+                <div id="lastResponse" class="last-response" style="display: none;">
+                    <div id="responseGrade" class="response-grade">Последний ответ: -</div>
+                    <div id="responseFeedback" class="feedback-tip">-</div>
                 </div>
             </div>
 
             <div class="chat-box">
-                <div id="chat-messages" class="chat-messages"></div>
+                <div id="chatMessages" class="chat-messages"></div>
                 <div class="chat-input-area">
-                    <textarea id="chat-input" class="chat-input" placeholder="Ваше сообщение..." rows="3"></textarea>
+                    <textarea id="chatInput" class="chat-input" placeholder="Ваше сообщение..." rows="3"></textarea>
                     <div class="actions">
-                        <button id="voice-btn" class="voice-btn">🎤</button>
-                        <button class="send-btn" id="send-btn">💬 Отправить</button>
+                        <button id="voiceButton" class="voice-btn">🎤</button>
+                        <button id="sendButton" class="send-btn">💬 Отправить</button>
                     </div>
                 </div>
             </div>
@@ -188,12 +180,10 @@
     </div>
 
     <script>
-        // ===============================
-        // СЦЕНАРИИ
-        // ===============================
-        const SCENARIOS = [
+        // Данные сценариев
+        const scenarios = [
             {
-                id: 'cold-call-it-company',
+                id: 'cold-call',
                 title: 'Холодный звонок в IT компанию',
                 category: 'cold-call',
                 difficulty: 'intermediate',
@@ -201,9 +191,7 @@
                 client: {
                     name: 'Алексей',
                     role: 'IT Директор',
-                    company: 'IT компания "Инфотех"',
-                    pain_points: ['Нет единой системы', 'Сотрудники используют почту', 'Инциденты теряются'],
-                    personality: 'busy-skeptical'
+                    company: 'IT компания "Инфotech"'
                 },
                 greeting: 'Алло? Слушаю, у меня мало времени. Кто звонит?'
             },
@@ -216,9 +204,7 @@
                 client: {
                     name: 'Иван',
                     role: 'CIO',
-                    company: 'Банк "Солид"',
-                    pain_points: ['SLA не выполняются', 'Инциденты теряются', 'Нет отчётов для правления'],
-                    personality: 'expert-skeptical'
+                    company: 'Банк "Солид"'
                 },
                 greeting: 'Добрый день! У нас 15 минут. Что предлагаем показать?'
             },
@@ -231,103 +217,61 @@
                 client: {
                     name: 'Дмитрий',
                     role: 'IT Manager',
-                    company: 'Торговая сеть',
-                    pain_points: ['Ограниченный бюджет'],
-                    personality: 'price-sensitive'
+                    company: 'Торговая сеть'
                 },
                 greeting: 'Посмотрели демо, всё неплохо. Но у вас цены выше чем у 1C. Почему нам платить больше?'
             },
             {
-                id: 'objection-no-time',
-                title: 'Возражение: "Нет времени"',
-                category: 'objections',
-                difficulty: 'intermediate',
-                duration: 10,
-                client: {
-                    name: 'Мария',
-                    role: 'CTO',
-                    company: 'Финтех стартап',
-                    pain_points: ['Запускаем проект', 'Команда перегружена'],
-                    personality: 'busy-ambitious'
-                },
-                greeting: 'Слушайте, у нас сейчас деплой, совсем нет времени на внедрение новой системы. Может через полгода?'
-            },
-            {
-                id: 'objection-competitor',
-                title: 'Возражение: "Уже есть система"',
-                category: 'objections',
-                difficulty: 'advanced',
-                duration: 12,
-                client: {
-                    name: 'Пётр',
-                    role: 'IT Директор',
-                    company: 'Производственная компания',
-                    pain_points: ['Есть Jira/ServiceNow', 'Система устарела', 'Пользователи недовольны'],
-                    personality: 'loyal-but-frustrated'
-                },
-                greeting: 'Ну у нас уже есть Service Now, на которую мы потратили миллионы. Зачем нам что-то новое?'
-            },
-            {
-                id: 'closing-proposal',
-                title: 'Закрытие: Коммерческое предложение',
+                id: 'closing',
+                title: 'Закрытие сделки',
                 category: 'closing',
                 difficulty: 'intermediate',
                 duration: 8,
                 client: {
                     name: 'Елена',
                     role: 'Руководитель поддержки',
-                    company: 'Страховая компания',
-                    pain_points: ['Нужна aprobation бюджета'],
-                    personality: 'interested-but-cautious'
+                    company: 'Страховая компания'
                 },
                 greeting: 'Спасибо за демо, система интересная. Нужно согласовать бюджет. Что делать дальше?'
-            },
-            {
-                id: 'closing-deadline',
-                title: 'Закрытие: Deadline по бюджету',
-                category: 'closing',
-                difficulty: 'advanced',
-                duration: 10,
-                client: {
-                    name: 'Сергей',
-                    role: 'CFO',
-                    company: 'Ритейлер',
-                    pain_points: ['Конец года', 'Бюджет закрывается', 'Нужно решение сейчас'],
-                    personality: 'decision-maker-urgent'
-                },
-                greeting: 'Слушайте, у нас до конца недели нужно принять решение по бюджету. Если не сейчас — то в следующем году. Можете быстро?'
             }
         ];
 
-        // ===============================
-        // СОСТОЯНИЯ
-        // ===============================
+        // Состояние
         let currentScenario = null;
         let conversation = [];
-        let speechRecognition = null;
-        let synthesis = window.speechSynthesis;
+        let metrics = { responses: 0, scores: [], bestScore: 0 };
         let isRecording = false;
-        let metrics = {
-            responses: 0,
-            scores: [],
-            bestScore: 0
+        let recognition = null;
+
+        // Элементы DOM
+        const elements = {
+            hero: document.getElementById('hero'),
+            scenarios: document.getElementById('scenarios'),
+            scenarioGrid: document.getElementById('scenarioGrid'),
+            simulation: document.getElementById('simulation'),
+            simTitle: document.getElementById('simTitle'),
+            clientName: document.getElementById('clientName'),
+            clientRole: document.getElementById('clientRole'),
+            chatMessages: document.getElementById('chatMessages'),
+            chatInput: document.getElementById('chatInput'),
+            metricResponses: document.getElementById('metricResponses'),
+            metricAvgScore: document.getElementById('metricAvgScore'),
+            metricBestScore: document.getElementById('metricBestScore'),
+            lastResponse: document.getElementById('lastResponse'),
+            responseGrade: document.getElementById('responseGrade'),
+            responseFeedback: document.getElementById('responseFeedback')
         };
 
-        // ===============================
-        // ФУНКЦИИ
-        // ===============================
+        // Функции
         function showScenarios() {
             console.log('showScenarios called');
-            document.querySelector('.hero').style.display = 'none';
-            document.getElementById('scenarios').style.display = 'block';
+            elements.hero.style.display = 'none';
+            elements.scenarios.style.display = 'block';
             renderScenarios();
-            console.log('showScenarios completed');
         }
 
         function renderScenarios() {
-            console.log('renderScenarios called');
-            const grid = document.getElementById('scenario-grid');
-            grid.innerHTML = '';
+            elements.scenarioGrid.innerHTML = '';
 
             const categories = {
                 'cold-call': '📞 Холодные звонки',
@@ -337,14 +281,14 @@
             };
 
             let currentCat = null;
-            SCENARIOS.forEach(scenario => {
+
+            scenarios.forEach(scenario => {
                 if (scenario.category !== currentCat) {
                     currentCat = scenario.category;
-
                     const header = document.createElement('h3');
                     header.style.cssText = 'color: #1A1A1A; margin: 30px 0 15px 0;';
                     header.textContent = categories[scenario.category];
-                    grid.appendChild(header);
+                    elements.scenarioGrid.appendChild(header);
                 }
 
                 const card = document.createElement('div');
@@ -356,12 +300,10 @@
                 card.innerHTML = `
                     <div class="scenario-meta">📋 ${diffLabel} • ${scenario.duration} мин</div>
                     <h4 class="scenario-title">${scenario.title}</h4>
-                    <p class="scenario-desc">${scenario.client.name} — ${scenario.client.role}, ${scenario.client.company}</p>
-                    <p class="scenario-desc">💡 ${scenario.client.pain_points[0]}</p>
+                    <p class="scenario-desc">${scenario.client.name} — ${scenario.client.role}</p>
                     <button class="scenario-button">Начать тренировку →</button>
                 `;
 
-                // Добавляем обработчики отдельно
                 const button = card.querySelector('.scenario-button');
                 button.onclick = (e) => {
                     e.stopPropagation();
@@ -370,134 +312,97 @@
 
                 card.onclick = () => startSimulation(scenario.id);
 
-                grid.appendChild(card);
+                elements.scenarioGrid.appendChild(card);
             });
-            console.log('renderScenarios completed');
         }
 
         function startSimulation(scenarioId) {
-            console.log('startSimulation called with ID:', scenarioId);
-            const scenario = SCENARIOS.find(s => s.id === scenarioId);
-            console.log('Found scenario:', scenario);
-            if (!scenario) {
-                console.error('Scenario not found for ID:', scenarioId);
-                return;
-            }
+            const scenario = scenarios.find(s => s.id === scenarioId);
+            if (!scenario) return;
 
             currentScenario = scenario;
             conversation = [];
-
-            // Сбрасываем метрики
-            metrics = {
-                responses: 0,
-                scores: [],
-                bestScore: 0
-            };
-
-            // Сбрасываем UI метрик
-            document.getElementById('metric-responses').textContent = '0';
-            document.getElementById('metric-avg-score').textContent = '-';
-            document.getElementById('metric-best-score').textContent = '-';
-            document.getElementById('last-response').style.display = 'none';
+            metrics = { responses: 0, scores: [], bestScore: 0 };
 
             // Показываем симуляцию
-            document.querySelector('.hero').style.display = 'none';
-            document.getElementById('scenarios').style.display = 'none';
-            document.getElementById('simulation').classList.add('active');
+            elements.hero.style.display = 'none';
+            elements.scenarios.style.display = 'none';
+            elements.simulation.classList.add('active');
 
             // Заполняем информацию
-            document.getElementById('sim-title').textContent = scenario.title;
-            document.getElementById('client-name').textContent = scenario.client.name;
-            document.getElementById('client-role').textContent = scenario.client.role + ', ' + scenario.client.company;
+            elements.simTitle.textContent = scenario.title;
+            elements.clientName.textContent = scenario.client.name;
+            elements.clientRole.textContent = scenario.client.role + ', ' + scenario.client.company;
+
+            // Сбрасываем метрики
+            elements.metricResponses.textContent = '0';
+            elements.metricAvgScore.textContent = '-';
+            elements.metricBestScore.textContent = '-';
+            elements.lastResponse.style.display = 'none';
 
             // Очищаем чат
-            document.getElementById('chat-messages').innerHTML = '';
+            elements.chatMessages.innerHTML = '';
 
             // Приветствие
             setTimeout(() => {
                 addMessage('assistant', scenario.greeting);
-                speakText(scenario.greeting);
             }, 500);
-            console.log('startSimulation completed');
         }
 
         function addMessage(role, content) {
-            const chat = document.getElementById('chat-messages');
             const msg = document.createElement('div');
             msg.className = `message ${role}`;
             msg.innerHTML = `
                 <div class="message-sender">${role === 'user' ? 'Вы' : currentScenario.client.name}</div>
                 <div class="message-content">${content}</div>
             `;
-            chat.appendChild(msg);
-            chat.scrollTop = chat.scrollHeight;
-        }
-
-        function speakText(text) {
-            if (synthesis && window.speechSynthesis) {
-                synthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'ru-RU';
-                utterance.rate = 1.0;
-                synthesis.speak(utterance);
-            }
+            elements.chatMessages.appendChild(msg);
+            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
         }
 
         function sendMessage() {
-            console.log('sendMessage called');
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if (!text) {
-                console.log('Empty message, returning');
-                return;
-            }
+            const text = elements.chatInput.value.trim();
+            if (!text) return;
 
-            console.log('Processing message:', text);
             addMessage('user', text);
             conversation.push({role: 'user', content: text});
-            input.value = '';
+            elements.chatInput.value = '';
 
-            // Оцениваем ответ пользователя
-            const evaluation = evaluateResponse(text, conversation);
+            // Оценка ответа
+            const evaluation = evaluateResponse(text);
             updateMetrics(evaluation);
 
-            // AI ответ с улучшенной логикой
-            const response = getSmartResponse(text, evaluation);
-            addMessage('assistant', response);
-            conversation.push({role: 'assistant', content: response});
-            speakText(response);
-            console.log('sendMessage completed');
+            // AI ответ
+            const response = getResponse(text, evaluation);
+            setTimeout(() => {
+                addMessage('assistant', response);
+                conversation.push({role: 'assistant', content: response});
+            }, 500);
         }
 
-        function evaluateResponse(userMessage, conversation) {
-            const lower = userMessage.toLowerCase();
+        function evaluateResponse(text) {
+            const lower = text.toLowerCase();
             let score = 3;
             let feedback = [];
-            let grade = '';
 
-            // Базовая логика оценки
-            const wordCount = userMessage.split(/\s+/).length;
-            if (wordCount < 5) {
-                score -= 0.5;
-                feedback.push('⚠️ Слишком короткий ответ');
+            if (text.length < 10) {
+                score -= 1;
+                feedback.push('Слишком коротко');
+            } else if (text.length > 20) {
+                score += 0.5;
+                feedback.push('Хорошая длина');
             }
 
-            // Ограничиваем оценку от 1 до 5
+            if (lower.includes('ценност') || lower.includes('решен')) {
+                score += 1;
+                feedback.push('Озвучиваете ценность');
+            }
+
             score = Math.max(1, Math.min(5, score));
-            score = Math.round(score * 10) / 10;
 
-            // Определяем текстовую оценку
-            if (score >= 4.5) grade = '🌟 Превосходно';
-            else if (score >= 4.0) grade = '✅ Отлично';
-            else if (score >= 3.5) grade = '👍 Хорошо';
-            else if (score >= 2.5) grade = '⚠️ Нормально';
-            else grade = '❌ Нужно улучшить';
+            let grade = score >= 4 ? '✅ Отлично' : score >= 3 ? '👍 Хорошо' : '⚠️ Нужно улучшить';
 
-            return {
-                score: score,
-                grade: grade,
-                feedback: feedback.length > 0 ? feedback : ['💡 Попробуйте добавить больше конкретики о ценности для клиента']
-            };
+            return { score, grade, feedback: feedback.length > 0 ? feedback : ['Нормально'] };
         }
 
         function updateMetrics(evaluation) {
@@ -505,78 +410,48 @@
             metrics.scores.push(evaluation.score);
             metrics.bestScore = Math.max(metrics.bestScore, evaluation.score);
 
-            const avgScore = metrics.scores.reduce((a, b) => a + b, 0) / metrics.scores.length;
+            const avg = metrics.scores.reduce((a, b) => a + b, 0) / metrics.scores.length;
 
-            document.getElementById('metric-responses').textContent = metrics.responses;
-            document.getElementById('metric-avg-score').textContent = avgScore.toFixed(1);
-            document.getElementById('metric-best-score').textContent = metrics.bestScore.toFixed(1);
+            elements.metricResponses.textContent = metrics.responses;
+            elements.metricAvgScore.textContent = avg.toFixed(1);
+            elements.metricBestScore.textContent = metrics.bestScore.toFixed(1);
 
-            // Показываем оценку последнего ответа
-            const lastResponseEl = document.getElementById('last-response');
-            lastResponseEl.style.display = 'block';
-
-            const responseGrade = document.getElementById('response-grade');
-            responseGrade.textContent = `Последний ответ: ${evaluation.grade} (${evaluation.score}/5)`;
-            responseGrade.className = 'response-grade';
-            if (evaluation.score >= 4.5) responseGrade.classList.add('grade-5');
-            else if (evaluation.score >= 4.0) responseGrade.classList.add('grade-4');
-            else if (evaluation.score >= 3.5) responseGrade.classList.add('grade-3');
-            else if (evaluation.score >= 2.5) responseGrade.classList.add('grade-2');
-            else responseGrade.classList.add('grade-1');
-
-            const responseFeedback = document.getElementById('response-feedback');
-            responseFeedback.textContent = evaluation.feedback.join(' | ');
+            elements.lastResponse.style.display = 'block';
+            elements.responseGrade.textContent = `Последний ответ: ${evaluation.grade} (${evaluation.score}/5)`;
+            elements.responseFeedback.textContent = evaluation.feedback.join(' | ');
         }
 
-        function getSmartResponse(userMessage, evaluation) {
-            const lower = userMessage.toLowerCase();
-            const isGoodResponse = evaluation.score >= 4.0;
-            const isPoorResponse = evaluation.score <= 2.5;
+        function getResponse(text, evaluation) {
+            const lower = text.toLowerCase();
 
-            // Специфичные ответы по сценариям
-            if (currentScenario.id === 'cold-call-it-company') {
-                if (isGoodResponse && (lower.includes('минут') || lower.includes('ценност'))) {
-                    return 'Хм, звучит интересно. У нас действительно есть проблемы с инцидентами. Что конкретно предлагаете?';
+            if (currentScenario.id === 'cold-call') {
+                if (evaluation.score >= 4) {
+                    return 'Звучит интересно. У нас действительно есть проблемы. Что конкретно предлагаете?';
                 }
-                if (isPoorResponse) {
-                    return 'Слушайте, у меня действительно нет времени. Если коротко - в чём суть?';
-                }
-                return 'Могу выделить 5 минут. Но только по делу. Что предлагаете?';
+                return 'У меня мало времени. Суть в чём?';
             }
 
             if (currentScenario.id === 'demo-banking') {
-                if (isGoodResponse && (lower.includes('sla') || lower.includes('инцидент'))) {
-                    return 'Это как раз то, что нам нужно! Покажите конкретно как SLA контролируется?';
+                if (lower.includes('покаж') || lower.includes('демонстрац')) {
+                    return 'Отлично. Начнём с SLA. Как настраиваются уведомления?';
                 }
-                return 'Понятно концепцию. А как это поможет с моими SLA? Покажите конкретику.';
+                return 'Покажите как это решает мои проблемы с SLA?';
             }
 
-            // Универсальные ответы
-            if (isGoodResponse) {
-                const goodResponses = [
-                    'Звучит перспективно. Расскажите подробнее.',
-                    'Понимаю. Что конкретно предлагаете дальше?',
-                    'Хорошо, это имеет смысл. Продолжайте.'
-                ];
-                return goodResponses[Math.floor(Math.random() * goodResponses.length)];
+            if (currentScenario.id === 'objection-price') {
+                if (lower.includes('roi') || lower.includes('окуп')) {
+                    return 'За какой период окупаемость?';
+                }
+                return 'Но всё равно дорого. Докажите ROI.';
             }
 
-            if (isPoorResponse) {
-                const poorResponses = [
-                    'Понимаю, но не хватает конкретики. В чём реальная ценность?',
-                    'Слышу вас, но как это относится к моим задачам?'
-                ];
-                return poorResponses[Math.floor(Math.random() * poorResponses.length)];
-            }
-
-            return 'Понимаю. Что дальше?';
+            return 'Понятно. Что дальше?';
         }
 
         function backToScenarios() {
-            console.log('backToScenarios called');
-            document.getElementById('simulation').classList.remove('active');
-            document.querySelector('.hero').style.display = 'block';
-            document.getElementById('scenarios').style.display = 'none';
+            elements.simulation.classList.remove('active');
+            elements.hero.style.display = 'block';
+            elements.scenarios.style.display = 'none';
             currentScenario = null;
             conversation = [];
         }
@@ -585,112 +460,67 @@
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
             if (!SpeechRecognition) {
-                alert('Голосовой ввод не поддерживается. Используйте текст.');
+                alert('Голосовой ввод не поддерживается');
                 return;
             }
 
             if (isRecording) {
-                stopRecording();
+                if (recognition) recognition.stop();
             } else {
-                startRecording();
+                recognition = new SpeechRecognition();
+                recognition.lang = 'ru-RU';
+                recognition.continuous = false;
+
+                recognition.onstart = () => {
+                    isRecording = true;
+                    document.getElementById('recording').classList.add('active');
+                    document.getElementById('voiceButton').textContent = '⏹';
+                };
+
+                recognition.onend = () => {
+                    isRecording = false;
+                    document.getElementById('recording').classList.remove('active');
+                    document.getElementById('voiceButton').textContent = '🎤';
+                };
+
+                recognition.onresult = (event) => {
+                    const text = event.results[0][0].transcript;
+                    elements.chatInput.value = text;
+                };
+
+                recognition.start();
             }
         }
 
-        function startRecording() {
-            speechRecognition = new SpeechRecognition();
-            speechRecognition.lang = 'ru-RU';
-            speechRecognition.continuous = false;
-            speechRecognition.interimResults = false;
-
-            speechRecognition.onstart = () => {
-                isRecording = true;
-                document.getElementById('recording').classList.add('active');
-                document.getElementById('voice-btn').textContent = '⏹';
-            };
-
-            speechRecognition.onend = () => {
-                isRecording = false;
-                document.getElementById('recording').classList.remove('active');
-                document.getElementById('voice-btn').textContent = '🎤';
-            };
-
-            speechRecognition.onresult = (event) => {
-                const text = event.results[0][0].transcript;
-                document.getElementById('chat-input').value = text;
-                setTimeout(() => sendMessage(), 500);
-            };
-
-            speechRecognition.onerror = (error) => {
-                console.error('Speech error:', error);
-                isRecording = false;
-                stopRecording();
-            };
-
-            speechRecognition.start();
-        }
-
-        function stopRecording() {
-            if (speechRecognition) {
-                speechRecognition.stop();
-            }
-        }
-
-        // ===============================
-        // ИНИЦИАЛИЗАЦИЯ
-        // ===============================
+        // Инициализация
         function init() {
-            console.log('🚀 ITSM365 Sales Trainer initializing...');
+            console.log('Initializing...');
 
-            // Привязка событий через ID вместо onclick в HTML
-            const startBtn = document.getElementById('start-btn');
-            if (startBtn) {
-                startBtn.onclick = showScenarios;
-                console.log('✅ Start button bound');
-            } else {
-                console.error('❌ Start button not found');
-            }
+            // Привязка событий
+            document.getElementById('startButton').onclick = showScenarios;
+            document.getElementById('backButton').onclick = backToScenarios;
+            document.getElementById('sendButton').onclick = sendMessage;
+            document.getElementById('voiceButton').onclick = toggleVoice;
 
-            const backBtn = document.getElementById('back-btn');
-            if (backBtn) {
-                backBtn.onclick = backToScenarios;
-                console.log('✅ Back button bound');
-            } else {
-                console.error('❌ Back button not found');
-            }
+            // Enter для отправки
+            elements.chatInput.onkeydown = (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            };
 
-            const sendBtn = document.getElementById('send-btn');
-            if (sendBtn) {
-                sendBtn.onclick = sendMessage;
-                console.log('✅ Send button bound');
-            } else {
-                console.error('❌ Send button not found');
-            }
-
-            const voiceBtn = document.getElementById('voice-btn');
-            if (voiceBtn) {
-                voiceBtn.onclick = toggleVoice;
-                console.log('✅ Voice button bound');
-            } else {
-                console.error('❌ Voice button not found');
-            }
-
-            console.log('✅ ITSM365 Sales Trainer initialized successfully');
-            console.log('Available functions:', {
-                showScenarios: typeof showScenarios,
-                sendMessage: typeof sendMessage,
-                backToScenarios: typeof backToScenarios,
-                startSimulation: typeof startSimulation
-            });
+            console.log('Initialized successfully');
         }
 
-        // Запускаем инициализацию после загрузки DOM
+        // Запуск
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
         } else {
             init();
         }
 
-        console.log('📝 ITSM365 Sales Trainer загружен');
+        console.log('App loaded');
     </script>
 </body>
 </html>
