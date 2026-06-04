@@ -479,7 +479,15 @@
         }
 
         function startRecording() {
-            speechRecognition = new webkitSpeechRecognition();
+            // Safari использует webkitSpeechRecognition
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (!SpeechRecognition) {
+                alert('Голосовой ввод не поддерживается в вашем браузере. Используйте текстовый ввод.');
+                return;
+            }
+
+            speechRecognition = new SpeechRecognition();
             speechRecognition.lang = 'ru-RU';
             speechRecognition.continuous = false;
             speechRecognition.interimResults = false;
@@ -499,7 +507,16 @@
             speechRecognition.onresult = (event) => {
                 const text = event.results[0][0].transcript;
                 document.getElementById('user-input').value = text;
-                sendMessage();
+                // Автоматически отправляем
+                setTimeout(() => sendMessage(), 100);
+            };
+
+            speechRecognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                isRecording = false;
+                document.getElementById('recording-indicator').style.display = 'none';
+                document.getElementById('voice-icon').textContent = '🎤';
+                alert('Ошибка распознавания: ' + event.error);
             };
 
             speechRecognition.start();
