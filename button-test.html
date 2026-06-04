@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Button Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        button { margin: 10px; padding: 15px 30px; font-size: 16px; cursor: pointer; }
+        #result { margin: 20px 0; padding: 15px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Button Test Page</h1>
+    <p>Откройте консоль (F12) и нажмите на кнопки</p>
+    
+    <button onclick="alert('ONCLICK WORKS!')">1. onclick</button>
+    <button id="btn2">2. .onclick</button>
+    <button id="btn3">3. addEventListener</button>
+    
+    <div id="result">Нажмите на любую кнопку...</div>
+
+    <script>
+        console.log('=== SCRIPT START ===');
+        console.log('Document ready state:', document.readyState);
+
+        // Test 2: .onclick
+        document.getElementById('btn2').onclick = function() {
+            console.log('Button 2 clicked via .onclick');
+            alert('.onclick WORKS!');
+            document.getElementById('result').innerHTML = 'Button 2 (.onclick) clicked!';
+        };
+
+        // Test 3: addEventListener
+        document.getElementById('btn3').addEventListener('click', function() {
+            console.log('Button 3 clicked via addEventListener');
+            alert('addEventListener WORKS!');
+            document.getElementById('result').innerHTML += ' Button 3 (addEventListener) clicked!';
+        });
+
+        console.log('Button 2 element:', document.getElementById('btn2'));
+        console.log('Button 3 element:', document.getElementById('btn3'));
+        console.log('=== SCRIPT END ===');
+    </script>
+</body>
+</html>
