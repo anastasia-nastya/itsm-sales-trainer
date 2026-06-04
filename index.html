@@ -8,10 +8,10 @@
         body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
         .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
         h1 { color: #0066CC; text-align: center; }
-        button { 
-            width: 100%; padding: 15px; font-size: 18px; 
-            background: #FF6B35; color: white; border: none; 
-            border-radius: 8px; cursor: pointer; margin: 10px 0; 
+        button {
+            width: 100%; padding: 15px; font-size: 18px;
+            background: #FF6B35; color: white; border: none;
+            border-radius: 8px; cursor: pointer; margin: 10px 0;
         }
         button:hover { background: #e55a2b; }
         #menu { display: none; }
@@ -28,28 +28,47 @@
     <div class="container">
         <h1>ITSM 365</h1>
         <p style="text-align: center;">Тренажёр менеджеров по продажам</p>
-        
-        <button onclick="showMenu()">🚀 Начать тренировку</button>
-        
+
+        <button id="startBtn">🚀 Начать тренировку</button>
+
         <div id="menu">
             <h2>Выберите сценарий:</h2>
-            <button onclick="startDemo()">Демо для CIO</button>
-            <button onclick="startObjection()">Возражение: Дорого</button>
-            <button onclick="startClosing()">Закрытие сделки</button>
+            <button id="demoBtn">Демо для CIO</button>
+            <button id="objectionBtn">Возражение: Дорого</button>
+            <button id="closingBtn">Закрытие сделки</button>
         </div>
-        
+
         <div id="chat" class="chat">
             <h3 id="clientName">-</h3>
             <div id="messages"></div>
             <input type="text" id="msgInput" placeholder="Ваше сообщение...">
-            <button onclick="sendMsg()">💬 Отправить</button>
-            <button onclick="backMenu()">← Назад</button>
+            <button id="sendBtn">💬 Отправить</button>
+            <button id="backBtn">← Назад</button>
         </div>
     </div>
 
     <script>
         var client = "";
         var messages = [];
+
+        // Используем addEventListener вместо onclick для совместимости с Safari
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+
+            document.getElementById('startBtn').addEventListener('click', showMenu);
+            document.getElementById('demoBtn').addEventListener('click', startDemo);
+            document.getElementById('objectionBtn').addEventListener('click', startObjection);
+            document.getElementById('closingBtn').addEventListener('click', startClosing);
+            document.getElementById('sendBtn').addEventListener('click', sendMsg);
+            document.getElementById('backBtn').addEventListener('click', backMenu);
+
+            // Enter для отправки
+            document.getElementById('msgInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') sendMsg();
+            });
+
+            console.log('All event listeners attached');
+        });
 
         function showMenu() {
             document.getElementById('menu').style.display = 'block';
@@ -91,10 +110,10 @@
             var input = document.getElementById('msgInput');
             var text = input.value;
             if (!text) return;
-            
+
             addMessage('user', text);
             input.value = '';
-            
+
             setTimeout(function() {
                 var responses = [
                     'Понятно. Расскажите подробнее.',
@@ -113,13 +132,7 @@
             document.getElementById('messages').innerHTML = '';
         }
 
-        // Enter для отправки
-        document.getElementById('msgInput').onkeydown = function(e) {
-            if (e.key === 'Enter') sendMsg();
-        };
-
-        console.log('App loaded - using var syntax');
-        console.log('showMenu function:', typeof showMenu);
+        console.log('App loaded');
     </script>
 </body>
 </html>
