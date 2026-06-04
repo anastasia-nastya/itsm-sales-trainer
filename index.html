@@ -27,72 +27,20 @@
                     🚀 Начать тренировку →
                 </button>
 
-                <div class="materials-link" onclick="showView('materials')">
-                    📚 Материалы для менеджеров
-                </div>
-
                 <div class="stats">
                     <div class="stat-item">
                         <div class="stat-value">28</div>
                         <div class="stat-label">сценариев</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value">3</div>
-                        <div class="stat-label">уровня сложности</div>
+                        <div class="stat-value">AI</div>
+                        <div class="stat-label">с логикой</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-value">AI</div>
-                        <div class="stat-label">ассистент</div>
+                        <div class="stat-value">🎤</div>
+                        <div class="stat-label">голос</div>
                     </div>
                 </div>
-
-                <div class="badges">
-                    <span class="badge">Быстрый старт</span>
-                    <span class="badge">SaaS модель</span>
-                    <span class="badge">Голосовое управление</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Секция преимуществ -->
-        <section id="why-view" class="view">
-            <div class="why-container">
-                <h2 class="section-title">🎯 Преимущества платформы</h2>
-
-                <h3 class="subsection-title">Почему ITSM 365?</h3>
-                <p class="subsection-desc">Экосистема продуктов для комплексной автоматизации сервисных процессов</p>
-
-                <div class="advantages-grid">
-                    <div class="advantage-card">
-                        <h4>SaaS модель</h4>
-                        <p>Быстрый старт без капитальных затрат. Автоматические обновления.</p>
-                        <ul>
-                            <li>2-8 недель внедрение</li>
-                            <li>Без затрат на серверы</li>
-                            <li>Автообновления включены</li>
-                        </ul>
-                    </div>
-                    <div class="advantage-card">
-                        <h4>Low-code платформа</h4>
-                        <p>Настраивайте без разработчиков. Визуальный конструктор процессов.</p>
-                        <ul>
-                            <li>Без программистов</li>
-                            <li>Визуальный конструктор</li>
-                            <li>Гибкая настройка</li>
-                        </ul>
-                    </div>
-                    <div class="advantage-card">
-                        <h4>4 продукта в экосистеме</h4>
-                        <p>SUPPORT, OUTSOURCE, PROJECTS, HR — бесшовная интеграция.</p>
-                        <ul>
-                            <li>Единая база данных</li>
-                            <li>Масштабируемость</li>
-                            <li>Интеграция</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <button class="back-button" onclick="showView('hero')">← Назад</button>
             </div>
         </section>
 
@@ -101,7 +49,6 @@
             <div class="scenarios-container">
                 <div class="scenarios-header">
                     <h2 class="section-title">🎯 Сценарии тренировок</h2>
-                    <p class="section-desc">Выберите свой путь для практики с AI-клиентами</p>
                     <button class="back-button-small" onclick="showView('hero')">← Назад</button>
                 </div>
 
@@ -110,18 +57,9 @@
                         <label>Категория:</label>
                         <select id="category-filter" onchange="renderScenarios()">
                             <option value="all">Все категории</option>
-                            <option value="demo">🎯 Встречи и презентации</option>
-                            <option value="objections">🛡️ Работа с возражениями</option>
-                            <option value="closing">💰 Переговоры и закрытие</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Сложность:</label>
-                        <select id="difficulty-filter" onchange="renderScenarios()">
-                            <option value="all">Все уровни</option>
-                            <option value="beginner">Начальный</option>
-                            <option value="intermediate">Средний</option>
-                            <option value="advanced">Продвинутый</option>
+                            <option value="demo">🎯 Демонстрации</option>
+                            <option value="objections">🛡️ Возражения</option>
+                            <option value="closing">💰 Закрытие</option>
                         </select>
                     </div>
                 </div>
@@ -134,31 +72,35 @@
         <section id="simulation-view" class="view">
             <div class="simulation-container">
                 <div class="simulation-header">
+                    <h2 id="scenario-title">Загрузка...</h2>
                     <button class="back-button" onclick="endSimulation()">← Завершить</button>
-                    <div class="simulation-info">
-                        <h3 id="scenario-title">Загрузка...</h3>
-                        <div id="scenario-meta"></div>
-                    </div>
                 </div>
 
-                <div class="client-profile">
+                <div class="client-profile-card">
                     <div class="client-avatar">👤</div>
-                    <div class="client-details">
-                        <h4 id="client-name">-</h4>
+                    <div class="client-info">
+                        <h3 id="client-name">-</h3>
                         <p id="client-role">-</p>
                         <p id="client-company">-</p>
                     </div>
                 </div>
 
+                <div class="context-card">
+                    <h4>💡 Боли клиента:</h4>
+                    <ul id="client-pains"></ul>
+                </div>
+
+                <div class="context-card">
+                    <h4>🎯 Ваши цели:</h4>
+                    <ul id="scenario-objectives"></ul>
+                </div>
+
                 <div class="chat-container">
                     <div id="chat-messages" class="chat-messages"></div>
-
-                    <div class="api-key-section">
-                        <small id="api-status">🤖 AI: HuggingFace (бесплатно)</small>
-                    </div>
+                    <div class="ai-status" id="ai-status">🤖 AI думает...</div>
 
                     <div class="chat-input-area">
-                        <textarea id="user-input" class="chat-input" placeholder="Ваше сообщение..." rows="3"></textarea>
+                        <textarea id="user-input" class="chat-input" placeholder="Ваше сообщение..." rows="3" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendMessage();}"></textarea>
                         <div class="input-actions">
                             <button id="voice-btn" class="voice-button" onclick="toggleVoice()">
                                 <span id="voice-icon">🎤</span>
@@ -178,7 +120,7 @@
         <!-- Результаты -->
         <section id="results-view" class="view">
             <div class="results-container">
-                <h2 class="section-title">📊 Результаты тренировки</h2>
+                <h2>📊 Результаты тренировки</h2>
 
                 <div class="score-display">
                     <div id="final-score" class="score-value">0%</div>
@@ -186,92 +128,133 @@
                 </div>
 
                 <div class="results-details">
-                    <h3>Выполненные цели:</h3>
-                    <ul id="achieved-objectives" class="achieved-list"></ul>
-                </div>
-
-                <div class="results-feedback">
                     <h3>💡 Рекомендации:</h3>
                     <p id="feedback-text"></p>
                 </div>
 
-                <div class="results-actions">
-                    <button class="action-button primary" onclick="showView('scenarios')">Вернуться к сценариям</button>
-                    <button class="action-button secondary" onclick="retryScenario()">Попробовать снова</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Материалы -->
-        <section id="materials-view" class="view">
-            <div class="materials-container">
-                <h2 class="section-title">📚 Материалы для менеджеров</h2>
-                <button class="back-button" onclick="showView('hero')">← Назад</button>
-
-                <div class="materials-content">
-                    <h3>Экосистема ITSM 365</h3>
-                    <div class="products-grid">
-                        <div class="product-item">
-                            <h4>SUPPORT</h4>
-                            <p>Service Desk и управление ИТ-услугами</p>
-                        </div>
-                        <div class="product-item">
-                            <h4>OUTSOURCE</h4>
-                            <p>Управление SLA и выездными инженерами</p>
-                        </div>
-                        <div class="product-item">
-                            <h4>PROJECTS</h4>
-                            <p>Управление ИТ-проектами</p>
-                        </div>
-                        <div class="product-item">
-                            <h4>HR</h4>
-                            <p>HR-автоматизация и подбор персонала</p>
-                        </div>
-                    </div>
-
-                    <h3>Ответы на типовые вопросы</h3>
-                    <div class="faq-list">
-                        <div class="faq-item">
-                            <h4>Сколько времени займёт внедрение?</h4>
-                            <p>Для базовой настройки — 2 недели. Для полного внедрения — 4-8 недель.</p>
-                        </div>
-                        <div class="faq-item">
-                            <h4>Как это работает с нашей инфраструктурой?</h4>
-                            <p>Интегрируемся через API с вашими системами: AD, мониторинг, helpdesk.</p>
-                        </div>
-                        <div class="faq-item">
-                            <h4>Дорого по сравнению с конкурентами?</h4>
-                            <p>SaaS модель означает нет upfront costs. ROI — 6-12 месяцев.</p>
-                        </div>
-                    </div>
-                </div>
+                <button class="action-button" onclick="showView('scenarios')">Вернуться к сценариям</button>
             </div>
         </section>
     </div>
 
     <script>
         // ===============================
-        // ВСЕ СЦЕНАРИИ (28 штук)
+        // СЦЕНАРИИ С КОНТЕКСТОМ
         // ===============================
-        const ALL_SCENARIOS = [
-            // Демонстрации (15)
-            {id: 'demo-banking-advanced', category: 'demo', difficulty: 'advanced', duration: 15, criteria: 4, title: 'Первая встреча с CIO (ТехноПром)', description: 'Проведение первой встречи с CIO крупной компании для презентации ITSM365', client: {name: 'Александр Петров', role: 'CIO', company: 'ТехноПром'}},
-            {id: 'demo-coffee-intermediate', category: 'demo', difficulty: 'intermediate', duration: 20, criteria: 4, title: 'Презентация ITSM365 для сети кофеен', description: 'Встреча с IT-директором сети кофеен по всей России. Клиент озабочен поддержкой касс, wi-fi, кофемашин.', client: {name: 'Елена Волкова', role: 'IT Director', company: 'КофейнаяРост'}},
-            {id: 'demo-agro-intermediate', category: 'demo', difficulty: 'intermediate', duration: 18, criteria: 4, title: 'Автоматизация для агропромышленного комплекса', description: 'Встреча с руководителем ИТ-отдела агрокомпании, занимающейся поставками запчастей в Сибирь.', client: {name: 'Игорь Семенов', role: 'IT Manager', company: 'СибАгроПром'}},
-            {id: 'demo-outsource-advanced', category: 'demo', difficulty: 'advanced', duration: 20, criteria: 4, title: 'ITSM365.Outsource для аутсорсинговой компании', description: 'Презентация для IT-аутсорсинга: автоматизация работы выездных инженеров и поддержка клиентов.', client: {name: 'Михаил Громов', role: 'CTO', company: 'ТехноСервис'}},
-            {id: 'demo-hr-intermediate', category: 'demo', difficulty: 'intermediate', duration: 15, criteria: 4, title: 'HR-automation для управляющей компании', description: 'Встреча с HR-директором крупной управляющей компании по автоматизации подбора персонала.', client: {name: 'Ольга Соколова', role: 'HR Director', company: 'ПрофиИнвест'}},
-            {id: 'demo-it-manager-beginner', category: 'demo', difficulty: 'beginner', duration: 15, criteria: 4, title: 'Презентация для IT Manager (средний уровень)', description: 'Работа с IT Manager, который не является LPR, но влияет на решение.', client: {name: 'Сергей Новиков', role: 'IT Manager', company: 'СтройСервис'}},
-            {id: 'demo-enterprise-advanced', category: 'demo', difficulty: 'advanced', duration: 25, criteria: 4, title: 'Enterprise-сделка: холдинг с десятками компаний', description: 'Сложная сделка с управляющей компанией на предмет внедрения ITSM365 во все дочерние предприятия.', client: {name: 'Владимир Кузнецов', role: 'CEO', company: 'ИнвестХолдинг'}},
-            {id: 'demo-realestate-beginner', category: 'demo', difficulty: 'beginner', duration: 12, criteria: 4, title: 'Малый бизнес: автоматизация для агентства недвижимости', description: 'Работа с владельцем небольшого агентства недвижимости с ограниченным бюджетом.', client: {name: 'Наталья Морозова', role: 'Owner', company: 'ДомМечты'}},
-
-            // Возражения (6)
-            {id: 'objection-price-intermediate', category: 'objections', difficulty: 'intermediate', duration: 12, criteria: 4, title: 'Возражение: "Дорого, конкуренты дешевле"', description: 'Работа с ценовым возражением с использованием реальных данных о бюджете и ROI.', client: {name: 'Виктор Тихонов', role: 'Финансовый директор', company: 'ЛогистикПро'}},
-            {id: 'objection-satisfied-advanced', category: 'objections', difficulty: 'advanced', duration: 15, criteria: 4, title: 'Возражение: "Мы удовлетворены текущим решением"', description: 'Работа с клиентом, который использует решение конкурента и не видит причин переходить.', client: {name: 'Анна Белова', role: 'CIO', company: 'ФинТех'}},
-            {id: 'objection-onpremise-advanced', category: 'objections', difficulty: 'advanced', duration: 12, criteria: 4, title: 'Возражение: "Нам требуется On-Premise решение"', description: 'Работа с клиентом, который требует On-Premise, а ITSM365 облачный.', client: {name: 'Дмитрий Козлов', role: 'CISO', company: 'ГосТех'}},
-
-            // Закрытие (5)
-            {id: 'closing-contract-advanced', category: 'closing', difficulty: 'advanced', duration: 25, criteria: 4, title: 'Финальные переговоры: условия контракта', description: 'Сложные переговоры с procurement-менеджером крупной компании по условиям контракта ITSM365.', client: {name: 'Мария Иванова', role: 'Procurement Manager', company: 'ТрансЛогистик'}},
-            {id: 'closing-cto-advanced', category: 'closing', difficulty: 'advanced', duration: 20, criteria: 4, title: 'Переговоры с CTO: технические требования', description: 'Сложные переговоры с техническим директором по техническим требованиям и интеграциям.', client: {name: 'Алексей Смирнов', role: 'CTO', company: 'Банковские Технологии'}}
+        const SCENARIOS = [
+            // ========================================
+            // Демонстрации
+            // ========================================
+            {
+                id: 'demo-banking',
+                title: 'Демо для CIO банка',
+                category: 'demo',
+                difficulty: 'advanced',
+                duration: 15,
+                client: {
+                    name: 'Иван',
+                    role: 'CIO',
+                    company: 'Комерческий банк "Солид"',
+                    industry: 'Банки',
+                    pain_points: ['SLA не выполняются', 'Инциденты теряются', 'Нет отчётов для правления'],
+                    personality: 'expert-skeptical'
+                },
+                objectives: ['Выявить боли', 'Показать решение', 'Обработать возражение', 'Закрыть на POC'],
+                system_prompt: `Ты Иван, CIO банка. Скептический эксперт.
+Боли: SLA не выполняются, инциденты теряются, нет отчётов.
+Возражения: "Дорого", "ServiceNow известнее", "Сколько внедрение?"
+Отвечай коротко (1-2 предложения), по делу. Хочешь увидеть ценность.`,
+                },
+                greeting: 'Добрый день. У нас 15 минут. Что предлагаем показать?'
+            },
+            {
+                id: 'demo-coffee',
+                title: 'Сеть кофеен',
+                category: 'demo',
+                difficulty: 'intermediate',
+                duration: 20,
+                client: {
+                    name: 'Елена',
+                    role: 'IT Director',
+                    company: 'КофейнаяРост',
+                    industry: 'HoReCa',
+                    pain_points: ['300+ точек по всей России', 'Поддержка касс, wi-fi, кофемашин'],
+                    personality: 'pragmatic'
+                },
+                objectives: ['Показать как работает с distributed locations', 'Демонстрировать мобильное приложение'],
+                system_prompt: `Ты Елена, IT Director сети кофеен.
+300+ точек по России. Прагматичная, занятая.
+Заботишь о поддержке distributed operations.
+Отвечай по делу. Интересуйся практичностью.`,
+                },
+                greeting: 'Здравствуйте! У нас 300+ точек по всей России. Основная проблема - поддерживать всё это работает. Как ваша система может помочь?'
+            },
+            {
+                id: 'objection-price',
+                title: 'Возражение: "Дорого"',
+                category: 'objections',
+                difficulty: 'intermediate',
+                duration: 12,
+                client: {
+                    name: 'Дмитрий',
+                    role: 'IT Manager',
+                    company: 'Торговая сеть',
+                    industry: 'Ритейл',
+                    pain_points: ['Ограниченный бюджет'],
+                    personality: 'price-sensitive'
+                },
+                objectives: ['Не спорить о цене', 'Показать value', 'Перевести в ROI'],
+                system_prompt: `Ты Дмитрий, IT Manager торговой сети.
+Возражение: "У вас дорого, 1C дешевле".
+Не соглашайся сразу. Хочешь понять ROI.
+Отвечай скептически но открытого. Коротко.`,
+                },
+                greeting: 'Посмотрели демо, всё неплохо. Но у вас цены выше чем у 1C. Почему нам платить больше?'
+            },
+            {
+                id: 'objection-competitor',
+                title: 'Возражение: "Выбираем с Naumen"',
+                category: 'objections',
+                difficulty: 'advanced',
+                duration: 15,
+                client: {
+                    name: 'Алексей',
+                    role: 'Директор ИТ',
+                    company: 'Телеком оператор',
+                    industry: 'Телеком',
+                    pain_points: ['Сравнение с конкурентами'],
+                    personality: 'analytical'
+                },
+                objectives: ['Не критиковать конкурента', 'Показать дифференциацию', 'Привести кейсы'],
+                system_prompt: `Ты Алексей, Директор ИТ телеком-оператора.
+Сравниваешь ITSM365 с Naumen. "На рынке дольше".
+Не обижай конкурента. Требуешь concrete arguments.
+Отвечай аналитически, 1-2 предложения.`,
+                },
+                greeting: 'Мы на финальном выборе между вами и Naumen. Они на рынке дольше, больше кейсов. Почему выбрать вас?'
+            },
+            {
+                id: 'closing-proposal',
+                title: 'Закрытие: Коммерческое предложение',
+                category: 'closing',
+                difficulty: 'intermediate',
+                duration: 8,
+                client: {
+                    name: 'Елена',
+                    role: 'Руководитель поддержки',
+                    company: 'Страховая компания',
+                    industry: 'Финансы',
+                    pain_points: ['Нужно согласование бюджета'],
+                    personality: 'interested-but-cautious'
+                },
+                objectives: ['Подтвердить интерес', 'Согласовать состав КП', 'Установить дедлайн'],
+                system_prompt: `Ты Елена, Руководитель поддержки страховой компании.
+Видишь ценность, НО нужно aprobation бюджета.
+Твоя позиция: "интересно, нужно согласовать".
+Дружелюбная, но осторожная. Отвечай коротко.`,
+                },
+                greeting: 'Спасибо за демо, система интересная. Но мне нужно согласовать бюджет с финансовым директором. Что делать дальше?'
+            }
         ];
 
         // ===============================
@@ -288,7 +271,8 @@
         // ===============================
         function showView(viewName) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewName + '-view').classList.add('active');
+            const view = document.getElementById(viewName + '-view');
+            if (view) view.classList.add('active');
 
             if (viewName === 'scenarios') {
                 renderScenarios();
@@ -298,59 +282,47 @@
         function renderScenarios() {
             const list = document.getElementById('scenarios-list');
             const catFilter = document.getElementById('category-filter').value;
-            const diffFilter = document.getElementById('difficulty-filter').value;
 
-            let filtered = ALL_SCENARIOS;
-            if (catFilter !== 'all') filtered = filtered.filter(s => s.category === catFilter);
-            if (diffFilter !== 'all') filtered = filtered.filter(s => s.difficulty === diffFilter);
+            let filtered = SCENARIOS;
+            if (catFilter !== 'all') {
+                filtered = filtered.filter(s => s.category === catFilter);
+            }
 
             list.innerHTML = '';
 
             // Группируем по категориям
             const categories = {
-                'demo': '🎯 Встречи и презентации',
+                'demo': '🎯 Демонстрации',
                 'objections': '🛡️ Работа с возражениями',
-                'closing': '💰 Переговоры и закрытие'
+                'closing': '💰 Закрытие сделки'
             };
 
-            let currentCategory = null;
+            let currentCat = null;
             filtered.forEach(scenario => {
-                if (scenario.category !== currentCategory) {
-                    currentCategory = scenario.category;
-                    if (currentCategory !== 'all') {
-                        const header = document.createElement('h3');
-                        header.className = 'category-header';
-                        header.textContent = categories[currentCategory];
-                        list.appendChild(header);
-                    }
+                if (scenario.category !== currentCat) {
+                    currentCat = scenario.category;
+                    const header = document.createElement('h3');
+                    header.className = 'category-header';
+                    header.textContent = categories[scenario.category];
+                    list.appendChild(header);
                 }
 
                 const card = document.createElement('div');
                 card.className = 'scenario-card';
                 card.onclick = () => startSimulation(scenario);
 
+                const diffBadge = scenario.difficulty === 'beginner' ? 'Начальный' :
+                                  scenario.difficulty === 'intermediate' ? 'Средний' : 'Продвинутый';
+
                 card.innerHTML = `
-                    <div class="scenario-level">${getDifficultyLabel(scenario.difficulty)}</div>
+                    <div class="scenario-meta">${diffBadge} • ${scenario.duration} мин</div>
                     <h4 class="scenario-title">${scenario.title}</h4>
-                    <p class="scenario-desc">${scenario.description}</p>
-                    <div class="scenario-meta">
-                        <span>⏱ ${scenario.duration} мин</span>
-                        <span>📋 ${scenario.criteria} критериев</span>
-                    </div>
-                    <div class="scenario-client">
-                        <span>${scenario.client.name}</span>
-                        <span>${scenario.client.role}, ${scenario.client.company}</span>
-                    </div>
+                    <p class="scenario-desc">${scenario.client.name} — ${scenario.client.role}, ${scenario.client.company}</p>
                     <button class="scenario-button">Начать тренировку →</button>
                 `;
 
                 list.appendChild(card);
             });
-        }
-
-        function getDifficultyLabel(diff) {
-            const labels = {beginner: 'Начальный', intermediate: 'Средний', advanced: 'Продвинутый'};
-            return labels[diff] || diff;
         }
 
         // ===============================
@@ -360,31 +332,37 @@
             currentScenario = scenario;
             conversation = [];
 
+            // Заполняем информацию
             document.getElementById('scenario-title').textContent = scenario.title;
-            document.getElementById('scenario-meta').innerHTML = `
-                <span class="badge">${getDifficultyLabel(scenario.difficulty)}</span>
-                <span>⏱ ${scenario.duration} мин</span>
-            `;
             document.getElementById('client-name').textContent = scenario.client.name;
-            document.getElementById('client-role').textContent = scenario.client.role;
-            document.getElementById('client-company').textContent = scenario.client.company;
+            document.getElementById('client-role').textContent = scenario.client.role + ', ' + scenario.client.company;
+            document.getElementById('client-company').textContent = scenario.industry || '';
 
-            document.getElementById('chat-messages').innerHTML = '';
+            // Боли
+            const painsList = document.getElementById('client-pains');
+            painsList.innerHTML = '';
+            scenario.client.pain_points.forEach(pain => {
+                const li = document.createElement('li');
+                li.textContent = pain;
+                painsList.appendChild(li);
+            });
+
+            // Цели
+            const objectivesList = document.getElementById('scenario-objectives');
+            objectivesList.innerHTML = '';
+            scenario.objectives.forEach(obj => {
+                const li = document.createElement('li');
+                li.textContent = obj;
+                objectivesList.appendChild(li);
+            });
+
             showView('simulation');
 
-            // Приветствие клиента
+            // Приветствие
             setTimeout(() => {
-                addMessage('assistant', getClientGreeting(scenario));
+                addMessage('assistant', scenario.greeting);
+                speakText(scenario.greeting);
             }, 500);
-        }
-
-        function getClientGreeting(scenario) {
-            const greetings = {
-                'demo': 'Добрый день! Расскажите о вашей системе.',
-                'objections': 'Здравствуйте. У меня есть вопросы по вашей системе.',
-                'closing': 'Добрый день! Готов обсудить дальнейшее сотрудничество.'
-            };
-            return greetings[scenario.category] || 'Здравствуйте!';
         }
 
         function addMessage(role, content) {
@@ -397,10 +375,128 @@
             `;
             chat.appendChild(msg);
             chat.scrollTop = chat.scrollHeight;
+        }
 
-            if (role === 'assistant' && synthesis) {
-                synthesis.speak(content, {lang: 'ru-RU', rate: 1.0});
+        function speakText(text) {
+            if (synthesis && window.speechSynthesis) {
+                synthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ru-RU';
+                utterance.rate = 1.0;
+                synthesis.speak(utterance);
             }
+        }
+
+        // ===============================
+        // AI С ЛОГИКОЙ
+        // ===============================
+        async function getAIResponse(userMessage) {
+            const status = document.getElementById('ai-status');
+            status.textContent = '🤖 AI думает...';
+
+            try {
+                const response = await fetch('https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        inputs: `You are ${currentScenario.client.name}, ${currentScenario.client.role} from ${currentScenario.client.company}.
+
+${currentScenario.system_prompt}
+
+### Conversation history:
+${conversation.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`).join('\n')}
+
+### Current user message:
+User: ${userMessage}
+
+### Your task:
+Respond naturally to the user message as ${currentScenario.client.name}. Be realistic but helpful.
+Keep your response brief (1-2 sentences).
+
+### Guidelines:
+- If user is selling ITSM365: ask questions, express concerns, show interest
+- If user mentions price: express budget concerns
+- If user mentions competitors: acknowledge them, ask for differentiation
+- If user tries to close: be open but may need approval
+- Always stay in character as ${currentScenario.client.name}
+
+Response:`,
+                        parameters: {
+                            max_new_tokens: 100,
+                            temperature: 0.7,
+                            return_full_text: false
+                        }
+                    })
+                });
+
+                const data = await response.json();
+
+                let aiText = '';
+                if (Array.isArray(data)) {
+                    aiText = data[0]?.generated_text || '';
+                } else {
+                    aiText = data?.generated_text || '';
+                }
+
+                // Очищаем ответ
+                aiText = aiText.replace(/^Response:\s*/i, '').trim();
+
+                status.textContent = '✅ AI готов';
+                return aiText || 'Извините, не смог получить ответ.';
+            } catch (error) {
+                console.error('AI Error:', error);
+                status.textContent = '❌ Ошибка AI';
+                return getSmartFallbackResponse(userMessage);
+            }
+        }
+
+        function getSmartFallbackResponse(userMessage) {
+            const lowerMsg = userMessage.toLowerCase();
+            const context = conversation.slice(-3).map(m => m.content.toLowerCase()).join(' ');
+
+            // Анализируем сообщение и отвечаем логично
+            if (lowerMsg.includes('привет') || lowerMsg.includes('здравств')) {
+                return 'Добрый день! Расскажите мне о вашей системе.';
+            }
+            if (lowerMsg.includes('itSM365') || lowerMsg.includes('систем')) {
+                if (currentScenario.category === 'objections') {
+                    return 'Звучит интересно. Но как это лучше чем [конкурент]?';
+                }
+                return 'Понятно. А как это решает мои боли?';
+            }
+            if (lowerMsg.includes('цена') || lowerMsg.includes('стоит') || lowerMsg.includes('дорого')) {
+                if (currentScenario.category === 'objections') {
+                    return 'Бюджет ограничен. Можете обосновать ROI?';
+                }
+                return 'А сколько это будет стоить?';
+            }
+            if (lowerMsg.includes('конкурент') || lowerMsg.includes('наumen') || lowerMsg.includes('1C')) {
+                return 'Они на рынке дольше. Какие у вас преимущества?';
+            }
+            if (lowerMsg.includes('демо') || lowerMsg.includes('покаж') || lowerMsg.includes('расскажи')) {
+                return 'Хорошо, покажите как это работает на моих данных.';
+            }
+            if (lowerMsg.includes('внедрение') || lowerMsg.includes('срок')) {
+                return 'Сколько времени это займет? У нас нет полгода на это.';
+            }
+            if (lowerMsg.includes('согласен') || lowerMsg.includes('давай') || lowerMsg.includes('начин')) {
+                if (currentScenario.category === 'closing') {
+                    return 'Отлично. Подготовьте КП и отправьте мне email. Когда сможете?';
+                }
+                return 'Звучит интересно. Что дальше?';
+            }
+            if (lowerMsg.includes('подумаю') || lowerMsg.includes('надо') || lowerMsg.includes('согласоваться')) {
+                return 'Понимаю. Что конкретно нужно обсудить? Могу подготовить материалы.';
+            }
+
+            // Универсальные ответы
+            const fallbacks = [
+                'Расскажите подробнее об этом.',
+                'Как это соотносится с моими задачами?',
+                'Хорошо, продолжайте.',
+                'Понятно. И что дальше?'
+            ];
+            return fallbacks[Math.floor(Math.random() * fallbacks.length)];
         }
 
         async function sendMessage() {
@@ -409,56 +505,16 @@
             if (!text) return;
 
             addMessage('user', text);
-            conversation.push({role: 'user', content: text});
+            conversation.push({ role: 'user', content: text });
             input.value = '';
 
-            // AI ответ
-            const response = await getAIResponse(text);
-            addMessage('assistant', response);
-            conversation.push({role: 'assistant', content: response});
-        }
-
-        async function getAIResponse(userMessage) {
-            // HuggingFace Inference API — БЕСПЛАТНО, работает в России
-            const HF_MODEL = 'mistralai/Mistral-7B-Instruct-v0.3';
-
             try {
-                const response = await fetch(`https://api-inference.huggingface.co/models/${HF_MODEL}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        inputs: `<s>[INST] Ты ${currentScenario.client.name}, ${currentScenario.client.role} из компании ${currentScenario.client.company}. Отвечай коротко (1-2 предложения) как реалистичный клиент с возражениями. [/INST]\n${conversation.map(m => m.role === 'user' ? `Пользователь: ${m.content}` : `Ассистент: ${m.content}`).join('\n')}\nПользователь: ${userMessage}[/INST]`,
-                        parameters: {
-                            max_new_tokens: 150,
-                            temperature: 0.8,
-                            return_full_text: false
-                        }
-                    })
-                });
-
-                const data = await response.json();
-
-                // Извлекаем текст ответа
-                if (Array.isArray(data)) {
-                    return data[0]?.generated_text || 'Извините, не смог получить ответ.';
-                }
-                return data?.generated_text || 'Извините, не смог получить ответ.';
+                const response = await getAIResponse(text);
+                addMessage('assistant', response);
+                conversation.push({ role: 'assistant', content: response });
+                speakText(response);
             } catch (error) {
-                console.error('AI Error:', error);
-
-                // Fallback на базовые ответы
-                const basicResponses = [
-                    'Интересно. Расскажите подробнее.',
-                    'А как это работает с нашей текущей инфраструктурой?',
-                    'Сколько времени займёт внедрение?',
-                    'Это звучит дорого. Обоснуйте цену.',
-                    'Нужно обсудить с руководством.',
-                    'Покажите демо конкретного кейса.',
-                    'Какие у вас условия поддержки?',
-                ];
-                return basicResponses[Math.floor(Math.random() * basicResponses.length)];
+                console.error('Error:', error);
             }
         }
 
@@ -466,8 +522,8 @@
         // ГОЛОС
         // ===============================
         function toggleVoice() {
-            if (!('webkitSpeechRecognition' in window)) {
-                alert('Голосовой ввод не поддерживается в вашем браузере. Используйте Chrome.');
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Голосовой ввод не поддерживается. Используйте текст.');
                 return;
             }
 
@@ -479,13 +535,7 @@
         }
 
         function startRecording() {
-            // Safari использует webkitSpeechRecognition
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-            if (!SpeechRecognition) {
-                alert('Голосовой ввод не поддерживается в вашем браузере. Используйте текстовый ввод.');
-                return;
-            }
 
             speechRecognition = new SpeechRecognition();
             speechRecognition.lang = 'ru-RU';
@@ -508,15 +558,7 @@
                 const text = event.results[0][0].transcript;
                 document.getElementById('user-input').value = text;
                 // Автоматически отправляем
-                setTimeout(() => sendMessage(), 100);
-            };
-
-            speechRecognition.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
-                isRecording = false;
-                document.getElementById('recording-indicator').style.display = 'none';
-                document.getElementById('voice-icon').textContent = '🎤';
-                alert('Ошибка распознавания: ' + event.error);
+                setTimeout(() => sendMessage(), 500);
             };
 
             speechRecognition.start();
@@ -528,38 +570,22 @@
             }
         }
 
-        // ===============================
-        // РЕЗУЛЬТАТЫ
-        // ===============================
         function endSimulation() {
-            const score = Math.floor(60 + Math.random() * 35);
+            const score = Math.floor(60 + Math.random() * 30);
 
             document.getElementById('final-score').textContent = score + '%';
-            document.getElementById('achieved-objectives').innerHTML = `
-                <li>✓ Диалог начат</li>
-                <li>✓ Выявлены потребности</li>
-                <li>✓ Предложено решение</li>
-            `;
-            document.getElementById('feedback-text').textContent =
-                score >= 80 ? 'Отличная работа! Продолжайте практиковаться.' :
-                score >= 60 ? 'Хорошая работа. Обратите внимание на слабые места.' :
-                'Требуется больше практики. Рекомендую повторить сценарий.';
 
+            const feedback = score >= 80 ? 'Отличная работа! Продолжайте практиковаться.' :
+                           score >= 60 ? 'Хорошая работа. Обратите внимание на детали.' :
+                           'Требуется больше практики. Рекомендую повторить сценарии.';
+
+            document.getElementById('feedback-text').textContent = feedback;
             showView('results');
         }
 
-        function retryScenario() {
-            if (currentScenario) {
-                startSimulation(currentScenario);
-            }
-        }
-
-        // ===============================
-        // ИНИЦИАЛИЗАЦИЯ
-        // ===============================
+        // Инициализация
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('ITSM365 Sales Trainer загружен');
-            console.log('Сценариев:', ALL_SCENARIOS.length);
+            console.log('ITSM365 Sales Trainer с умными сценариями загружен');
         });
     </script>
 </body>
