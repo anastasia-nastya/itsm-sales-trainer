@@ -154,8 +154,7 @@
                     <div id="chat-messages" class="chat-messages"></div>
 
                     <div class="api-key-section">
-                        <small id="api-status">🔓 Режим: Базовый (без AI)</small>
-                        <button class="api-link" onclick="addApiKey()">[+ Добавить API ключ]</button>
+                        <small id="api-status">🤖 AI: HuggingFace (бесплатно)</small>
                     </div>
 
                     <div class="chat-input-area">
@@ -283,7 +282,6 @@
         let speechRecognition = null;
         let synthesis = window.speechSynthesis;
         let isRecording = false;
-        let apiKey = localStorage.getItem('groq_api_key') || null;
 
         // ===============================
         // ФУНКЦИИ
@@ -421,9 +419,36 @@
         }
 
         async function getAIResponse(userMessage) {
-            // Проверяем API ключ
-            if (!apiKey) {
-                // Если ключа нет, возвращаем базовый ответ
+            // HuggingFace Inference API — БЕСПЛАТНО, работает в России
+            const HF_MODEL = 'mistralai/Mistral-7B-Instruct-v0.3';
+
+            try {
+                const response = await fetch(`https://api-inference.huggingface.co/models/${HF_MODEL}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        inputs: `<s>[INST] Ты ${currentScenario.client.name}, ${currentScenario.client.role} из компании ${currentScenario.client.company}. Отвечай коротко (1-2 предложения) как реалистичный клиент с возражениями. [/INST]\n${conversation.map(m => m.role === 'user' ? `Пользователь: ${m.content}` : `Ассистент: ${m.content}`).join('\n')}\nПользователь: ${userMessage}[/INST]`,
+                        parameters: {
+                            max_new_tokens: 150,
+                            temperature: 0.8,
+                            return_full_text: false
+                        }
+                    })
+                });
+
+                const data = await response.json();
+
+                // Извлекаем текст ответа
+                if (Array.isArray(data)) {
+                    return data[0]?.generated_text || 'Извините, не смог получить ответ.';
+                }
+                return data?.generated_text || 'Извините, не смог получить ответ.';
+            } catch (error) {
+                console.error('AI Error:', error);
+
+                // Fallback на базовые ответы
                 const basicResponses = [
                     'Интересно. Расскажите подробнее.',
                     'А как это работает с нашей текущей инфраструктурой?',
@@ -434,32 +459,6 @@
                     'Какие у вас условия поддержки?',
                 ];
                 return basicResponses[Math.floor(Math.random() * basicResponses.length)];
-            }
-
-            try {
-                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
-                    },
-                    body: JSON.stringify({
-                        model: 'llama-3.3-70b-versatile',
-                        messages: [
-                            {role: 'system', content: `Ты ${currentScenario.client.name}, ${currentScenario.client.role} из компании ${currentScenario.client.company}. Отвечай коротко, 1-2 предложения. Реалистичный клиент с возражениями.`},
-                            ...conversation,
-                            {role: 'user', content: userMessage}
-                        ],
-                        temperature: 0.8,
-                        max_tokens: 200
-                    })
-                });
-
-                const data = await response.json();
-                return data.choices[0].message.content;
-            } catch (error) {
-                console.error('AI Error:', error);
-                return 'Извините, произошла ошибка с AI. Использую базовый режим.';
             }
         }
 
@@ -476,14 +475,6 @@
                 stopRecording();
             } else {
                 startRecording();
-            }
-        }
-
-        function addApiKey() {
-            apiKey = prompt('Введите ваш Groq API ключ для полноценной работы с AI:\n\nПолучите бесплатно на console.groq.com\n\nОставьте пустым для отмены.');
-            if (apiKey) {
-                localStorage.setItem('groq_api_key', apiKey);
-                document.getElementById('api-status').innerHTML = '🔐 Режим: AI (с ключом)';
             }
         }
 
