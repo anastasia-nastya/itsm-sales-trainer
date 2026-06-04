@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Диагностика тренажёра</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .test { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        .test h3 { margin-top: 0; }
+        button { margin: 10px 5px; padding: 10px 20px; cursor: pointer; font-size: 14px; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 4px; font-family: monospace; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Диагностика тренажёра ITSM365</h1>
+
+    <div class="test">
+        <h3>Тест 1: JavaScript работает?</h3>
+        <button onclick="testJS()">Проверить JavaScript</button>
+        <div id="js-result" class="result info">Нажмите кнопку для проверки...</div>
+    </div>
+
+    <div class="test">
+        <h3>Тест 2: Доступны ли функции тренажёра?</h3>
+        <button onclick="testFunctions()">Проверить функции</button>
+        <div id="func-result" class="result info">Нажмите кнопку для проверки...</div>
+    </div>
+
+    <div class="test">
+        <h3>Тест 3: Доступны ли HTML элементы?</h3>
+        <button onclick="testElements()">Проверить элементы</button>
+        <div id="elem-result" class="result info">Нажмите кнопку для проверки...</div>
+    </div>
+
+    <div class="test">
+        <h3>Тест 4: Работают ли кнопки как в тренажёре?</h3>
+        <button id="test-btn-1" class="scenario-button">Кнопка 1</button>
+        <button id="test-btn-2" class="scenario-button">Кнопка 2</button>
+        <div id="btn-result" class="result info">Нажмите на кнопки выше...</div>
+    </div>
+
+    <div class="test">
+        <h3>Тест 5: Консоль браузера</h3>
+        <p>Откройте консоль разработчика (F12) и посмотрите сообщения:</p>
+        <div id="console-log" class="result info">Логи будут появляться здесь...</div>
+    </div>
+
+    <div class="test">
+        <h3>Тест 6: Загрузка основного файла</h3>
+        <button onclick="loadMainFile()">Загрузить index.html</button>
+        <div id="load-result" class="result info">Нажмите кнопку для загрузки...</div>
+    </div>
+
+    <script>
+        const consoleLog = [];
+
+        function log(message) {
+            console.log(message);
+            consoleLog.push(message);
+            document.getElementById('console-log').innerHTML = consoleLog.join('<br>');
+        }
+
+        function testJS() {
+            try {
+                const result = document.getElementById('js-result');
+                result.innerHTML = '✅ JavaScript работает! Текущее время: ' + new Date().toLocaleTimeString();
+                result.className = 'result success';
+                log('✅ JavaScript test passed');
+            } catch (e) {
+                document.getElementById('js-result').innerHTML = '❌ Ошибка: ' + e.message;
+                log('❌ JavaScript test failed: ' + e.message);
+            }
+        }
+
+        function testFunctions() {
+            const result = document.getElementById('func-result');
+            const requiredFunctions = ['showScenarios', 'sendMessage', 'backToScenarios', 'startSimulation'];
+            const missing = [];
+
+            requiredFunctions.forEach(func => {
+                if (typeof window[func] !== 'function') {
+                    missing.push(func);
+                }
+            });
+
+            if (missing.length === 0) {
+                result.innerHTML = '✅ Все функции доступны!';
+                result.className = 'result success';
+                log('✅ All functions available');
+            } else {
+                result.innerHTML = '❌ Отсутствуют функции: ' + missing.join(', ');
+                result.className = 'result error';
+                log('❌ Missing functions: ' + missing.join(', '));
+            }
+        }
+
+        function testElements() {
+            const result = document.getElementById('elem-result');
+            const testElements = [
+                document.createElement('div'),
+                document.createElement('button'),
+                document.createElement('span')
+            ];
+
+            if (testElements.every(el => el instanceof HTMLElement)) {
+                result.innerHTML = '✅ DOM элементы создаются корректно!';
+                result.className = 'result success';
+                log('✅ DOM elements test passed');
+            } else {
+                result.innerHTML = '❌ Проблемы с созданием DOM элементов';
+                result.className = 'result error';
+                log('❌ DOM elements test failed');
+            }
+        }
+
+        // Test buttons similar to trainer
+        document.addEventListener('DOMContentLoaded', function() {
+            log('✅ DOMContentLoaded fired');
+
+            const btn1 = document.getElementById('test-btn-1');
+            const btn2 = document.getElementById('test-btn-2');
+
+            if (btn1 && btn2) {
+                btn1.onclick = function(e) {
+                    e.stopPropagation();
+                    document.getElementById('btn-result').innerHTML = '✅ Кнопка 1 работает! ' + new Date().toLocaleTimeString();
+                    document.getElementById('btn-result').className = 'result success';
+                    log('✅ Button 1 clicked');
+                };
+
+                btn2.onclick = function(e) {
+                    e.stopPropagation();
+                    document.getElementById('btn-result').innerHTML = '✅ Кнопка 2 работает! ' + new Date().toLocaleTimeString();
+                    document.getElementById('btn-result').className = 'result success';
+                    log('✅ Button 2 clicked');
+                };
+
+                log('✅ Event listeners attached');
+            } else {
+                log('❌ Could not find buttons');
+            }
+        });
+
+        function loadMainFile() {
+            const result = document.getElementById('load-result');
+            result.innerHTML = '⏳ Загрузка...';
+
+            fetch('index.html')
+                .then(response => {
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    return response.text();
+                })
+                .then(html => {
+                    result.innerHTML = '✅ index.html загружен! Размер: ' + html.length + ' байт';
+                    result.className = 'result success';
+                    log('✅ index.html loaded successfully');
+
+                    // Check for script tag
+                    if (html.includes('<script>')) {
+                        log('✅ Script tag found in index.html');
+                    } else {
+                        log('⚠️  Script tag NOT found in index.html');
+                    }
+                })
+                .catch(error => {
+                    result.innerHTML = '❌ Ошибка загрузки: ' + error.message;
+                    result.className = 'result error';
+                    log('❌ Failed to load index.html: ' + error.message);
+                });
+        }
+
+        // Initial log
+        log('🔍 Diagnostic page loaded');
+        log('🌐 Browser: ' + navigator.userAgent);
+        log('📍 URL: ' + window.location.href);
+    </script>
+</body>
+</html>

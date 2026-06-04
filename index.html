@@ -4,147 +4,209 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ITSM 365 — Тренажёр менеджеров по продажам</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #F5F7FA;
+            color: #1A1A1A;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .hero { text-align: center; margin-bottom: 60px; }
+        .logo { font-size: 3rem; font-weight: 700; color: #0066CC; margin-bottom: 20px; }
+        .hero p { font-size: 1.2rem; color: #6B7280; margin-bottom: 40px; }
+        .cta-button {
+            background: #FF6B35; color: white; border: none; padding: 15px 40px;
+            font-size: 1.1rem; font-weight: 600; border-radius: 8px; cursor: pointer;
+        }
+        .scenario-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
+        .scenario-card {
+            background: white; border: 1px solid #E5E7EB; border-radius: 12px; padding: 25px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .scenario-card:hover { border-color: #0066CC; transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .scenario-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+        .scenario-desc { font-size: 0.9rem; color: #6B7280; margin-bottom: 15px; }
+        .scenario-meta { font-size: 0.8rem; color: #6B7280; margin-bottom: 15px; }
+        .scenario-button {
+            width: 100%; padding: 12px; background: #0066CC; color: white;
+            border: none; border-radius: 8px; font-weight: 600; cursor: pointer;
+        }
+        .simulation { display: none; }
+        .simulation.active { display: block; }
+        .sim-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #E5E7EB;
+        }
+        .client-info {
+            background: white; border: 1px solid #E5E7EB; border-radius: 8px;
+            padding: 15px; margin-bottom: 20px;
+        }
+        .chat-box {
+            background: white; border: 1px solid #E5E7EB; border-radius: 8px;
+            overflow: hidden;
+        }
+        .chat-messages {
+            min-height: 400px; max-height: 400px; overflow-y: auto;
+            padding: 20px; background: #F8FAFC;
+        }
+        .message { margin-bottom: 20px; }
+        .message-sender { font-size: 0.75rem; color: #6B7280; margin-bottom: 5px; }
+        .message-content {
+            padding: 12px 16px; border-radius: 8px; line-height: 1.5;
+        }
+        .message.user .message-content { background: #0066CC; color: white; margin-left: auto; max-width: 70%; }
+        .message.assistant .message-content { background: #E5E7EB; max-width: 70%; }
+        .chat-input-area {
+            padding: 15px; border-top: 1px solid #E5E7EB;
+        }
+        .chat-input {
+            width: 100%; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px;
+            resize: none;
+        }
+        .actions { display: flex; gap: 10px; margin-top: 10px; }
+        .voice-btn {
+            width: 40px; height: 40px; border-radius: 50%; border: 1px solid #E5E7EB;
+            background: white; cursor: pointer; font-size: 1.2rem;
+        }
+        .send-btn {
+            padding: 10px 24px; background: #0066CC; color: white;
+            border: none; border-radius: 8px; font-weight: 600; cursor: pointer;
+        }
+        .back-btn {
+            padding: 8px 16px; background: #F5F7FA; border: 1px solid #E5E7EB;
+            border-radius: 6px; cursor: pointer;
+        }
+        .recording {
+            position: fixed; bottom: 20px; right: 20px; background: #FF6B35;
+            color: white; padding: 12px 20px; border-radius: 30px; display: none;
+        }
+        .recording.active { display: flex; align-items: center; gap: 10px; }
+        .recording-dot {
+            width: 10px; height: 10px; background: white; border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .feedback-panel {
+            background: white; border: 1px solid #E5E7EB; border-radius: 8px;
+            padding: 15px; margin-top: 20px;
+        }
+        .feedback-header { font-weight: 600; margin-bottom: 10px; color: #1A1A1A; }
+        .feedback-score {
+            display: inline-block; padding: 6px 12px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 600; margin-bottom: 10px;
+        }
+        .score-excellent { background: #10B981; color: white; }
+        .score-good { background: #3B82F6; color: white; }
+        .score-average { background: #F59E0B; color: white; }
+        .score-poor { background: #EF4444; color: white; }
+        .feedback-tip { font-size: 0.9rem; color: #6B7280; line-height: 1.5; }
+        .metrics-panel {
+            background: white; border: 1px solid #E5E7EB; border-radius: 8px;
+            padding: 15px; margin-bottom: 20px;
+        }
+        .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .metric-item { text-align: center; }
+        .metric-value { font-size: 1.5rem; font-weight: 700; color: #0066CC; }
+        .metric-label { font-size: 0.75rem; color: #6B7280; margin-top: 5px; }
+        .last-response { margin-top: 15px; padding-top: 15px; border-top: 1px solid #E5E7EB; }
+        .response-grade { font-weight: 600; margin-bottom: 5px; }
+        .grade-5 { color: #10B981; }
+        .grade-4 { color: #3B82F6; }
+        .grade-3 { color: #F59E0B; }
+        .grade-2 { color: #EF4444; }
+        .grade-1 { color: #DC2626; }
+    </style>
 </head>
 <body>
-    <div id="app">
+    <div class="container">
         <!-- Главный экран -->
-        <section id="hero-view" class="view active">
-            <div class="hero-container">
-                <div class="hero-header">
-                    <div class="logo">ITSM 365</div>
-                    <div class="ecosystem-badge">Экосистема решений</div>
-                    <div class="products">SUPPORT OUTSOURCE PROJECTS HR</div>
-                </div>
-
-                <h1 class="hero-title">Тренажёр менеджеров по продажам</h1>
-                <p class="hero-description">
-                    Практикуйте навыки B2B продаж с AI-клиентами в реалистичных сценариях.
-                    Отработка встреч, работа с возражениями, переговоры — всё в одном тренажёре.
-                </p>
-
-                <button class="cta-button" onclick="showView('scenarios')">
-                    🚀 Начать тренировку →
-                </button>
-
-                <div class="stats">
-                    <div class="stat-item">
-                        <div class="stat-value">28</div>
-                        <div class="stat-label">сценариев</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">AI</div>
-                        <div class="stat-label">с логикой</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">🎤</div>
-                        <div class="stat-label">голос</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <div class="hero">
+            <div class="logo">ITSM 365</div>
+            <h1>Тренажёр менеджеров по продажам</h1>
+            <p>Практикуйте навыки B2B продаж с AI-клиентами в реалистичных сценариях</p>
+            <button class="cta-button" onclick="showScenarios()">🚀 Начать тренировку →</button>
+        </div>
 
         <!-- Сценарии -->
-        <section id="scenarios-view" class="view">
-            <div class="scenarios-container">
-                <div class="scenarios-header">
-                    <h2 class="section-title">🎯 Сценарии тренировок</h2>
-                    <button class="back-button-small" onclick="showView('hero')">← Назад</button>
-                </div>
-
-                <div class="filters">
-                    <div class="filter-group">
-                        <label>Категория:</label>
-                        <select id="category-filter" onchange="renderScenarios()">
-                            <option value="all">Все категории</option>
-                            <option value="demo">🎯 Демонстрации</option>
-                            <option value="objections">🛡️ Возражения</option>
-                            <option value="closing">💰 Закрытие</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div id="scenarios-list" class="scenarios-list"></div>
-            </div>
-        </section>
+        <div id="scenarios" style="display: none;">
+            <h2 style="color: #0066CC; margin-bottom: 20px;">Выберите сценарий</h2>
+            <div class="scenario-grid"></div>
+        </div>
 
         <!-- Симуляция -->
-        <section id="simulation-view" class="view">
-            <div class="simulation-container">
-                <div class="simulation-header">
-                    <h2 id="scenario-title">Загрузка...</h2>
-                    <button class="back-button" onclick="endSimulation()">← Завершить</button>
-                </div>
+        <div id="simulation" class="simulation">
+            <div class="sim-header">
+                <h2 id="sim-title">Загрузка...</h2>
+                <button class="back-btn" onclick="backToScenarios()">← Назад</button>
+            </div>
 
-                <div class="client-profile-card">
-                    <div class="client-avatar">👤</div>
-                    <div class="client-info">
-                        <h3 id="client-name">-</h3>
-                        <p id="client-role">-</p>
-                        <p id="client-company">-</p>
+            <div class="client-info">
+                <h3 id="client-name">-</h3>
+                <p id="client-role">-</p>
+            </div>
+
+            <div class="metrics-panel">
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-value" id="metric-responses">0</div>
+                        <div class="metric-label">Ответов</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="metric-avg-score">-</div>
+                        <div class="metric-label">Средняя оценка</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="metric-best-score">-</div>
+                        <div class="metric-label">Лучшая оценка</div>
                     </div>
                 </div>
-
-                <div class="context-card">
-                    <h4>💡 Боли клиента:</h4>
-                    <ul id="client-pains"></ul>
+                <div id="last-response" class="last-response" style="display: none;">
+                    <div id="response-grade" class="response-grade">Последний ответ: -</div>
+                    <div id="response-feedback" class="feedback-tip">-</div>
                 </div>
+            </div>
 
-                <div class="context-card">
-                    <h4>🎯 Ваши цели:</h4>
-                    <ul id="scenario-objectives"></ul>
-                </div>
-
-                <div class="chat-container">
-                    <div id="chat-messages" class="chat-messages"></div>
-                    <div class="ai-status" id="ai-status">🤖 AI думает...</div>
-
-                    <div class="chat-input-area">
-                        <textarea id="user-input" class="chat-input" placeholder="Ваше сообщение..." rows="3" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendMessage();}"></textarea>
-                        <div class="input-actions">
-                            <button id="voice-btn" class="voice-button" onclick="toggleVoice()">
-                                <span id="voice-icon">🎤</span>
-                            </button>
-                            <button class="send-button" onclick="sendMessage()">💬 Отправить</button>
-                        </div>
+            <div class="chat-box">
+                <div id="chat-messages" class="chat-messages"></div>
+                <div class="chat-input-area">
+                    <textarea id="chat-input" class="chat-input" placeholder="Ваше сообщение..." rows="3"></textarea>
+                    <div class="actions">
+                        <button id="voice-btn" class="voice-btn">🎤</button>
+                        <button class="send-btn" onclick="sendMessage()">💬 Отправить</button>
                     </div>
                 </div>
-
-                <div id="recording-indicator" class="recording-indicator" style="display:none;">
-                    <div class="recording-dot"></div>
-                    <span>Слушаю...</span>
-                </div>
             </div>
-        </section>
 
-        <!-- Результаты -->
-        <section id="results-view" class="view">
-            <div class="results-container">
-                <h2>📊 Результаты тренировки</h2>
-
-                <div class="score-display">
-                    <div id="final-score" class="score-value">0%</div>
-                    <div class="score-label">Общая оценка</div>
-                </div>
-
-                <div class="results-details">
-                    <h3>💡 Рекомендации:</h3>
-                    <p id="feedback-text"></p>
-                </div>
-
-                <button class="action-button" onclick="showView('scenarios')">Вернуться к сценариям</button>
+            <div id="recording" class="recording">
+                <div class="recording-dot"></div>
+                <span>Слушаю...</span>
             </div>
-        </section>
+        </div>
     </div>
 
     <script>
         // ===============================
-        // СЦЕНАРИИ С КОНТЕКСТОМ
+        // СЦЕНАРИИ
         // ===============================
         const SCENARIOS = [
-            // ========================================
-            // Демонстрации
-            // ========================================
+            {
+                id: 'cold-call-it-company',
+                title: 'Холодный звонок в IT компанию',
+                category: 'cold-call',
+                difficulty: 'intermediate',
+                duration: 10,
+                client: {
+                    name: 'Алексей',
+                    role: 'IT Директор',
+                    company: 'IT компания "Инфотех"',
+                    pain_points: ['Нет единой системы', 'Сотрудники используют почту', 'Инциденты теряются'],
+                    personality: 'busy-skeptical'
+                },
+                greeting: 'Алло? Слушаю, у меня мало времени. Кто звонит?',
+                system_prompt: `Ты Алексей, занятой IT директор. Не любишь холодные звонки, но если услышишь ценность — дойдёшь. Боли: нет единой системы, инциденты теряются. Отвечай кратко, скептически.`
+            },
             {
                 id: 'demo-banking',
                 title: 'Демо для CIO банка',
@@ -154,40 +216,12 @@
                 client: {
                     name: 'Иван',
                     role: 'CIO',
-                    company: 'Комерческий банк "Солид"',
-                    industry: 'Банки',
+                    company: 'Банк "Солид"',
                     pain_points: ['SLA не выполняются', 'Инциденты теряются', 'Нет отчётов для правления'],
                     personality: 'expert-skeptical'
                 },
-                objectives: ['Выявить боли', 'Показать решение', 'Обработать возражение', 'Закрыть на POC'],
-                system_prompt: `Ты Иван, CIO банка. Скептический эксперт.
-Боли: SLA не выполняются, инциденты теряются, нет отчётов.
-Возражения: "Дорого", "ServiceNow известнее", "Сколько внедрение?"
-Отвечай коротко (1-2 предложения), по делу. Хочешь увидеть ценность.`,
-                },
-                greeting: 'Добрый день. У нас 15 минут. Что предлагаем показать?'
-            },
-            {
-                id: 'demo-coffee',
-                title: 'Сеть кофеен',
-                category: 'demo',
-                difficulty: 'intermediate',
-                duration: 20,
-                client: {
-                    name: 'Елена',
-                    role: 'IT Director',
-                    company: 'КофейнаяРост',
-                    industry: 'HoReCa',
-                    pain_points: ['300+ точек по всей России', 'Поддержка касс, wi-fi, кофемашин'],
-                    personality: 'pragmatic'
-                },
-                objectives: ['Показать как работает с distributed locations', 'Демонстрировать мобильное приложение'],
-                system_prompt: `Ты Елена, IT Director сети кофеен.
-300+ точек по России. Прагматичная, занятая.
-Заботишь о поддержке distributed operations.
-Отвечай по делу. Интересуйся практичностью.`,
-                },
-                greeting: 'Здравствуйте! У нас 300+ точек по всей России. Основная проблема - поддерживать всё это работает. Как ваша система может помочь?'
+                greeting: 'Добрый день! У нас 15 минут. Что предлагаем показать?',
+                system_prompt: `Ты Иван, CIO крупного банка. Скептик, эксперт. Боли: SLA не выполняются, инциденты теряются. Отвечай кратко (1-2 предложения) по делу. Хочешь увидеть ценность.`
             },
             {
                 id: 'objection-price',
@@ -199,39 +233,43 @@
                     name: 'Дмитрий',
                     role: 'IT Manager',
                     company: 'Торговая сеть',
-                    industry: 'Ритейл',
                     pain_points: ['Ограниченный бюджет'],
                     personality: 'price-sensitive'
                 },
-                objectives: ['Не спорить о цене', 'Показать value', 'Перевести в ROI'],
-                system_prompt: `Ты Дмитрий, IT Manager торговой сети.
-Возражение: "У вас дорого, 1C дешевле".
-Не соглашайся сразу. Хочешь понять ROI.
-Отвечай скептически но открытого. Коротко.`,
+                greeting: 'Посмотрели демо, всё неплохо. Но у вас цены выше чем у 1C. Почему нам платить больше?',
+                system_prompt: `Ты Дмитрий, IT Manager торговой сети. Возражение "дорого, 1C дешевле". Не соглашайся сразу. Хочешь понять ROI. Отвечай скептически но открыто. 1-2 предложения.`
+            },
+            {
+                id: 'objection-no-time',
+                title: 'Возражение: "Нет времени"',
+                category: 'objections',
+                difficulty: 'intermediate',
+                duration: 10,
+                client: {
+                    name: 'Мария',
+                    role: 'CTO',
+                    company: 'Финтех стартап',
+                    pain_points: ['Запускаем проект', 'Команда перегружена'],
+                    personality: 'busy-ambitious'
                 },
-                greeting: 'Посмотрели демо, всё неплохо. Но у вас цены выше чем у 1C. Почему нам платить больше?'
+                greeting: 'Слушайте, у нас сейчас деплой, совсем нет времени на внедрение новой системы. Может через полгода?',
+                system_prompt: `Ты Мария, CTO финтех стартапа. Амбициозная, занятая. Возражение "нет времени, не сейчас". Отвечай быстро, по делу. 1-2 предложения.`
             },
             {
                 id: 'objection-competitor',
-                title: 'Возражение: "Выбираем с Naumen"',
+                title: 'Возражение: "Уже есть система"',
                 category: 'objections',
                 difficulty: 'advanced',
-                duration: 15,
+                duration: 12,
                 client: {
-                    name: 'Алексей',
-                    role: 'Директор ИТ',
-                    company: 'Телеком оператор',
-                    industry: 'Телеком',
-                    pain_points: ['Сравнение с конкурентами'],
-                    personality: 'analytical'
+                    name: 'Пётр',
+                    role: 'IT Директор',
+                    company: 'Производственная компания',
+                    pain_points: ['Есть Jira/ServiceNow', 'Система устарела', 'Пользователи недовольны'],
+                    personality: 'loyal-but-frustrated'
                 },
-                objectives: ['Не критиковать конкурента', 'Показать дифференциацию', 'Привести кейсы'],
-                system_prompt: `Ты Алексей, Директор ИТ телеком-оператора.
-Сравниваешь ITSM365 с Naumen. "На рынке дольше".
-Не обижай конкурента. Требуешь concrete arguments.
-Отвечай аналитически, 1-2 предложения.`,
-                },
-                greeting: 'Мы на финальном выборе между вами и Naumen. Они на рынке дольше, больше кейсов. Почему выбрать вас?'
+                greeting: 'Ну у нас уже есть Service Now, на которую мы потратили миллионы. Зачем нам что-то новое?',
+                system_prompt: `Ты Пётр, лояльный но frustrated IT директор. Есть система (Jira/ServiceNow), но она не работает. Возражение "уже есть". Скептически но заинтересованно. 1-2 предложения.`
             },
             {
                 id: 'closing-proposal',
@@ -243,120 +281,143 @@
                     name: 'Елена',
                     role: 'Руководитель поддержки',
                     company: 'Страховая компания',
-                    industry: 'Финансы',
-                    pain_points: ['Нужно согласование бюджета'],
+                    pain_points: ['Нужна aprobation бюджета'],
                     personality: 'interested-but-cautious'
                 },
-                objectives: ['Подтвердить интерес', 'Согласовать состав КП', 'Установить дедлайн'],
-                system_prompt: `Ты Елена, Руководитель поддержки страховой компании.
-Видишь ценность, НО нужно aprobation бюджета.
-Твоя позиция: "интересно, нужно согласовать".
-Дружелюбная, но осторожная. Отвечай коротко.`,
+                greeting: 'Спасибо за демо, система интересная. Нужно согласовать бюджет. Что делать дальше?',
+                system_prompt: `Ты Елена, Руководитель поддержки страховой компании. Видишь ценность, НО нужно aprobation бюджета. Отвечай дружелюбно но осторожно. 1-2 предложения.`
+            },
+            {
+                id: 'closing-deadline',
+                title: 'Закрытие: Deadline по бюджету',
+                category: 'closing',
+                difficulty: 'advanced',
+                duration: 10,
+                client: {
+                    name: 'Сергей',
+                    role: 'CFO',
+                    company: 'Ритейлер',
+                    pain_points: ['Конец года', 'Бюджет закрывается', 'Нужно решение сейчас'],
+                    personality: 'decision-maker-urgent'
                 },
-                greeting: 'Спасибо за демо, система интересная. Но мне нужно согласовать бюджет с финансовым директором. Что делать дальше?'
+                greeting: 'Слушайте, у нас до конца недели нужно принять решение по бюджету. Если не сейчас — то в следующем году. Можете быстро?',
+                system_prompt: `Ты Сергей, CFO ритейлера. Deadline oriented. Нужно быстро. Отвечай прямо, по делу. 1-2 предложения. Хочешь цифры, сроки, гарантии.`
             }
         ];
 
         // ===============================
-        // ПЕРЕМЕННЫЕ
+        // СОСТОЯНИЯ
         // ===============================
         let currentScenario = null;
         let conversation = [];
         let speechRecognition = null;
         let synthesis = window.speechSynthesis;
         let isRecording = false;
+        let metrics = {
+            responses: 0,
+            scores: [],
+            bestScore: 0
+        };
+        let dialogueStage = 'opening'; // opening, discovery, presentation, handling-objections, closing
 
         // ===============================
         // ФУНКЦИИ
         // ===============================
-        function showView(viewName) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            const view = document.getElementById(viewName + '-view');
-            if (view) view.classList.add('active');
-
-            if (viewName === 'scenarios') {
-                renderScenarios();
-            }
+        function showScenarios() {
+            console.log('showScenarios called');
+            document.querySelector('.hero').style.display = 'none';
+            document.getElementById('scenarios').style.display = 'block';
+            renderScenarios();
+            console.log('showScenarios completed');
         }
 
         function renderScenarios() {
-            const list = document.getElementById('scenarios-list');
-            const catFilter = document.getElementById('category-filter').value;
+            const grid = document.querySelector('.scenario-grid');
+            grid.innerHTML = '';
 
-            let filtered = SCENARIOS;
-            if (catFilter !== 'all') {
-                filtered = filtered.filter(s => s.category === catFilter);
-            }
-
-            list.innerHTML = '';
-
-            // Группируем по категориям
             const categories = {
+                'cold-call': '📞 Холодные звонки',
                 'demo': '🎯 Демонстрации',
-                'objections': '🛡️ Работа с возражениями',
-                'closing': '💰 Закрытие сделки'
+                'objections': '🛡️ Возражения',
+                'closing': '💰 Закрытие'
             };
 
             let currentCat = null;
-            filtered.forEach(scenario => {
+            SCENARIOS.forEach(scenario => {
                 if (scenario.category !== currentCat) {
                     currentCat = scenario.category;
+
                     const header = document.createElement('h3');
-                    header.className = 'category-header';
+                    header.style.cssText = 'color: #1A1A1A; margin: 30px 0 15px 0;';
                     header.textContent = categories[scenario.category];
-                    list.appendChild(header);
+                    grid.appendChild(header);
                 }
 
                 const card = document.createElement('div');
                 card.className = 'scenario-card';
-                card.onclick = () => startSimulation(scenario);
 
-                const diffBadge = scenario.difficulty === 'beginner' ? 'Начальный' :
-                                  scenario.difficulty === 'intermediate' ? 'Средний' : 'Продвинутый';
+                const diffLabel = scenario.difficulty === 'advanced' ? 'Продвинутый' :
+                                  scenario.difficulty === 'intermediate' ? 'Средний' : 'Начальный';
 
                 card.innerHTML = `
-                    <div class="scenario-meta">${diffBadge} • ${scenario.duration} мин</div>
+                    <div class="scenario-meta">📋 ${diffLabel} • ${scenario.duration} мин</div>
                     <h4 class="scenario-title">${scenario.title}</h4>
                     <p class="scenario-desc">${scenario.client.name} — ${scenario.client.role}, ${scenario.client.company}</p>
+                    <p class="scenario-desc">💡 ${scenario.client.pain_points[0]}</p>
                     <button class="scenario-button">Начать тренировку →</button>
                 `;
 
-                list.appendChild(card);
+                // Добавляем обработчики отдельно
+                const button = card.querySelector('.scenario-button');
+                button.onclick = (e) => {
+                    e.stopPropagation();
+                    startSimulation(scenario.id);
+                };
+
+                card.onclick = () => startSimulation(scenario.id);
+
+                grid.appendChild(card);
             });
         }
 
-        // ===============================
-        // СИМУЛЯЦИЯ
-        // ===============================
-        function startSimulation(scenario) {
+        function startSimulation(scenarioId) {
+            console.log('startSimulation called with ID:', scenarioId);
+            const scenario = SCENARIOS.find(s => s.id === scenarioId);
+            console.log('Found scenario:', scenario);
+            if (!scenario) {
+                console.error('Scenario not found for ID:', scenarioId);
+                return;
+            }
+
             currentScenario = scenario;
             conversation = [];
 
+            // Сбрасываем метрики
+            metrics = {
+                responses: 0,
+                scores: [],
+                bestScore: 0
+            };
+            dialogueStage = 'opening';
+
+            // Сбрасываем UI метрик
+            document.getElementById('metric-responses').textContent = '0';
+            document.getElementById('metric-avg-score').textContent = '-';
+            document.getElementById('metric-best-score').textContent = '-';
+            document.getElementById('last-response').style.display = 'none';
+
+            // Показываем симуляцию
+            document.querySelector('.hero').style.display = 'none';
+            document.getElementById('scenarios').style.display = 'none';
+            document.getElementById('simulation').classList.add('active');
+
             // Заполняем информацию
-            document.getElementById('scenario-title').textContent = scenario.title;
+            document.getElementById('sim-title').textContent = scenario.title;
             document.getElementById('client-name').textContent = scenario.client.name;
             document.getElementById('client-role').textContent = scenario.client.role + ', ' + scenario.client.company;
-            document.getElementById('client-company').textContent = scenario.industry || '';
 
-            // Боли
-            const painsList = document.getElementById('client-pains');
-            painsList.innerHTML = '';
-            scenario.client.pain_points.forEach(pain => {
-                const li = document.createElement('li');
-                li.textContent = pain;
-                painsList.appendChild(li);
-            });
-
-            // Цели
-            const objectivesList = document.getElementById('scenario-objectives');
-            objectivesList.innerHTML = '';
-            scenario.objectives.forEach(obj => {
-                const li = document.createElement('li');
-                li.textContent = obj;
-                objectivesList.appendChild(li);
-            });
-
-            showView('simulation');
+            // Очищаем чат
+            document.getElementById('chat-messages').innerHTML = '';
 
             // Приветствие
             setTimeout(() => {
@@ -387,142 +448,381 @@
             }
         }
 
-        // ===============================
-        // AI С ЛОГИКОЙ
-        // ===============================
-        async function getAIResponse(userMessage) {
-            const status = document.getElementById('ai-status');
-            status.textContent = '🤖 AI думает...';
-
-            try {
-                const response = await fetch('https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        inputs: `You are ${currentScenario.client.name}, ${currentScenario.client.role} from ${currentScenario.client.company}.
-
-${currentScenario.system_prompt}
-
-### Conversation history:
-${conversation.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`).join('\n')}
-
-### Current user message:
-User: ${userMessage}
-
-### Your task:
-Respond naturally to the user message as ${currentScenario.client.name}. Be realistic but helpful.
-Keep your response brief (1-2 sentences).
-
-### Guidelines:
-- If user is selling ITSM365: ask questions, express concerns, show interest
-- If user mentions price: express budget concerns
-- If user mentions competitors: acknowledge them, ask for differentiation
-- If user tries to close: be open but may need approval
-- Always stay in character as ${currentScenario.client.name}
-
-Response:`,
-                        parameters: {
-                            max_new_tokens: 100,
-                            temperature: 0.7,
-                            return_full_text: false
-                        }
-                    })
-                });
-
-                const data = await response.json();
-
-                let aiText = '';
-                if (Array.isArray(data)) {
-                    aiText = data[0]?.generated_text || '';
-                } else {
-                    aiText = data?.generated_text || '';
-                }
-
-                // Очищаем ответ
-                aiText = aiText.replace(/^Response:\s*/i, '').trim();
-
-                status.textContent = '✅ AI готов';
-                return aiText || 'Извините, не смог получить ответ.';
-            } catch (error) {
-                console.error('AI Error:', error);
-                status.textContent = '❌ Ошибка AI';
-                return getSmartFallbackResponse(userMessage);
-            }
-        }
-
-        function getSmartFallbackResponse(userMessage) {
-            const lowerMsg = userMessage.toLowerCase();
-            const context = conversation.slice(-3).map(m => m.content.toLowerCase()).join(' ');
-
-            // Анализируем сообщение и отвечаем логично
-            if (lowerMsg.includes('привет') || lowerMsg.includes('здравств')) {
-                return 'Добрый день! Расскажите мне о вашей системе.';
-            }
-            if (lowerMsg.includes('itSM365') || lowerMsg.includes('систем')) {
-                if (currentScenario.category === 'objections') {
-                    return 'Звучит интересно. Но как это лучше чем [конкурент]?';
-                }
-                return 'Понятно. А как это решает мои боли?';
-            }
-            if (lowerMsg.includes('цена') || lowerMsg.includes('стоит') || lowerMsg.includes('дорого')) {
-                if (currentScenario.category === 'objections') {
-                    return 'Бюджет ограничен. Можете обосновать ROI?';
-                }
-                return 'А сколько это будет стоить?';
-            }
-            if (lowerMsg.includes('конкурент') || lowerMsg.includes('наumen') || lowerMsg.includes('1C')) {
-                return 'Они на рынке дольше. Какие у вас преимущества?';
-            }
-            if (lowerMsg.includes('демо') || lowerMsg.includes('покаж') || lowerMsg.includes('расскажи')) {
-                return 'Хорошо, покажите как это работает на моих данных.';
-            }
-            if (lowerMsg.includes('внедрение') || lowerMsg.includes('срок')) {
-                return 'Сколько времени это займет? У нас нет полгода на это.';
-            }
-            if (lowerMsg.includes('согласен') || lowerMsg.includes('давай') || lowerMsg.includes('начин')) {
-                if (currentScenario.category === 'closing') {
-                    return 'Отлично. Подготовьте КП и отправьте мне email. Когда сможете?';
-                }
-                return 'Звучит интересно. Что дальше?';
-            }
-            if (lowerMsg.includes('подумаю') || lowerMsg.includes('надо') || lowerMsg.includes('согласоваться')) {
-                return 'Понимаю. Что конкретно нужно обсудить? Могу подготовить материалы.';
-            }
-
-            // Универсальные ответы
-            const fallbacks = [
-                'Расскажите подробнее об этом.',
-                'Как это соотносится с моими задачами?',
-                'Хорошо, продолжайте.',
-                'Понятно. И что дальше?'
-            ];
-            return fallbacks[Math.floor(Math.random() * fallbacks.length)];
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('user-input');
+        function sendMessage() {
+            console.log('sendMessage called');
+            const input = document.getElementById('chat-input');
             const text = input.value.trim();
-            if (!text) return;
+            if (!text) {
+                console.log('Empty message, returning');
+                return;
+            }
 
+            console.log('Processing message:', text);
             addMessage('user', text);
-            conversation.push({ role: 'user', content: text });
+            conversation.push({role: 'user', content: text});
             input.value = '';
 
-            try {
-                const response = await getAIResponse(text);
-                addMessage('assistant', response);
-                conversation.push({ role: 'assistant', content: response });
-                speakText(response);
-            } catch (error) {
-                console.error('Error:', error);
+            // Оцениваем ответ пользователя
+            const evaluation = evaluateResponse(text, conversation);
+            updateMetrics(evaluation);
+
+            // AI ответ с улучшенной логикой
+            const response = getSmartResponse(text, evaluation);
+            addMessage('assistant', response);
+            conversation.push({role: 'assistant', content: response});
+            speakText(response);
+            console.log('sendMessage completed');
+        }
+
+        function evaluateResponse(userMessage, conversation) {
+            const lower = userMessage.toLowerCase();
+            const context = conversation.slice(-4).map(m => m.content.toLowerCase());
+            let score = 3; // Базовая оценка
+            let feedback = [];
+            let grade = '';
+
+            // Критерии оценки в зависимости от сценария
+            if (currentScenario.id === 'cold-call-it-company') {
+                // Холодный звонок - важно быстро заинтересовать
+                if (lower.includes('ценност') || lower.includes('решен') || lower.includes('проблем') || lower.includes('близко')) {
+                    score += 1;
+                    feedback.push('✅ Хорошо - озвучиваете ценность для клиента');
+                }
+                if (lower.includes('минут') || lower.includes('секунд') || lower.includes('удобн')) {
+                    score += 0.5;
+                    feedback.push('✅ Отлично - уважаете время клиента');
+                }
+                if (userMessage.length < 20) {
+                    score -= 1;
+                    feedback.push('❌ Слишком коротко - нужна более развернутая ценность');
+                }
+                if (lower.includes('купить') || lower.includes('цена') || lower.includes('деньг')) {
+                    score -= 0.5;
+                    feedback.push('⚠️ Слишком рано говорить о деньгах в холодном звонке');
+                }
             }
+
+            else if (currentScenario.id === 'demo-banking') {
+                // Демо для CIO - нужна экспертность и конкретика
+                if (lower.includes('sla') || lower.includes('инцидент') || lower.includes('отчёт') || lower.includes('отчет')) {
+                    score += 1;
+                    feedback.push('✅ Отлично - затрагиваете конкретные боли клиента');
+                }
+                if (lower.includes('покаж') || lower.includes('демонстрац') || lower.includes('пример')) {
+                    score += 0.5;
+                    feedback.push('✅ Хорошо - переходите к демонстрации');
+                }
+                if (lower.includes('автомат') || lower.includes('ускор') || lower.includes('сократ')) {
+                    score += 0.5;
+                    feedback.push('✅ Отлично - озвучиваете конкретные улучшения');
+                }
+                if (userMessage.length < 15) {
+                    score -= 0.5;
+                    feedback.push('❌ Слишком коротко для CIO уровня');
+                }
+            }
+
+            else if (currentScenario.id === 'objection-price') {
+                // Возражение "дорого" - нужен ROI и сравнение
+                if (lower.includes('roi') || lower.includes('окупа') || lower.includes('возврат') || lower.includes('эффективн')) {
+                    score += 1.5;
+                    feedback.push('✅ Отлично - используете ROI аргументацию');
+                }
+                if (lower.includes('tc') || lower.includes('общая стоимость') || lower.includes('владен')) {
+                    score += 1;
+                    feedback.push('✅ Превосходно - сравниваете TCO, а не только цену');
+                }
+                if (lower.includes('поддержк') || lower.includes('обновлен') || lower.includes('развит')) {
+                    score += 0.5;
+                    feedback.push('✅ Хорошо - учитываете дополнительные затраты');
+                }
+                if (lower.includes('скидк') || lower.includes('сделаем') || lower.includes('снизим')) {
+                    score -= 1;
+                    feedback.push('❌ Не соглашайтесь на скидку сразу - обосновывайте ценность!');
+                }
+            }
+
+            else if (currentScenario.id === 'objection-no-time') {
+                // Возражение "нет времени" - нужна быстрота и простота
+                if (lower.includes('быстр') || lower.includes('недел') || lower.includes('дн')) {
+                    score += 1;
+                    feedback.push('✅ Отлично - показываете как быстро можно начать');
+                }
+                if (lower.includes('облачн') || lower.includes('saaS') || lower.includes('подключ')) {
+                    score += 0.5;
+                    feedback.push('✅ Хорошо - предлагаете быстрое облако');
+                }
+                if (lower.includes('почек') || lower.includes('по результат') || lower.includes('попробу')) {
+                    score += 0.5;
+                    feedback.push('✅ Отлично - предлагаете пилот вместо полного внедрения');
+                }
+            }
+
+            else if (currentScenario.id === 'objection-competitor') {
+                // Возражение "уже есть система" - нужна дифференциация
+                if (lower.includes('отлич') || lower.includes('лучше') || lower.includes('преимущ')) {
+                    score += 1;
+                    feedback.push('✅ Хорошо - показываете отличия от текущей системы');
+                }
+                if (lower.includes('миграц') || lower.includes('переезд') || lower.includes('импорт')) {
+                    score += 0.5;
+                    feedback.push('✅ Отлично - показываете как легко мигрировать');
+                }
+                if (lower.includes('недоволь') || lower.includes('жалоб') || lower.includes('проблем')) {
+                    score += 1;
+                    feedback.push('✅ Превосходно - выявляете проблемы с текущей системой');
+                }
+            }
+
+            else if (currentScenario.id === 'closing-proposal' || currentScenario.id === 'closing-deadline') {
+                // Закрытие - нужен конкретный next step
+                if (lower.includes('кп') || lower.includes('предложен') || lower.includes('документ')) {
+                    score += 0.5;
+                    feedback.push('✅ Хорошо - предлагаете материалы');
+                }
+                if (lower.includes('встреч') || lower.includes('созвон') || lower.includes('вторник') || lower.includes('пятниц')) {
+                    score += 1;
+                    feedback.push('✅ Отлично - конкретизируете следующую встречу');
+                }
+                if (lower.includes('когда') || lower.includes('удобн') || lower.includes('свяж')) {
+                    score += 0.5;
+                    feedback.push('✅ Хорошо - уточняете тайминг');
+                }
+                if (lower.includes('подумаю') || lower.includes('решим') || lower.includes('позвон')) {
+                    score -= 1;
+                    feedback.push('❌ Пассивно - берите инициативу в свои руки!');
+                }
+            }
+
+            // Универсальные критерии
+            const wordCount = userMessage.split(/\s+/).length;
+            if (wordCount < 5) {
+                score -= 0.5;
+                feedback.push('⚠️ Слишком короткий ответ');
+            } else if (wordCount > 3 && wordCount < 8) {
+                // Оптимальная длина для B2B диалогов
+            } else if (wordCount > 50) {
+                score -= 0.5;
+                feedback.push('⚠️ Слишком длинно - потеряете внимание клиента');
+            }
+
+            // Вопposсы - хорошо
+            if (lower.includes('?')) {
+                score += 0.3;
+                feedback.push('✅ Хорошо - задаёте вопросы');
+            }
+
+            // Качественные слова
+            const qualityWords = ['конечно', 'понимаю', 'согласен', 'абсолютно', 'точно', 'уверен'];
+            if (qualityWords.some(q => lower.includes(q))) {
+                score += 0.2;
+            }
+
+            // Ограничиваем оценку от 1 до 5
+            score = Math.max(1, Math.min(5, score));
+            score = Math.round(score * 10) / 10; // Округляем до 1 знака
+
+            // Определяем текстовую оценку
+            if (score >= 4.5) grade = '🌟 Превосходно';
+            else if (score >= 4.0) grade = '✅ Отлично';
+            else if (score >= 3.5) grade = '👍 Хорошо';
+            else if (score >= 2.5) grade = '⚠️ Нормально';
+            else grade = '❌ Нужно улучшить';
+
+            return {
+                score: score,
+                grade: grade,
+                feedback: feedback.length > 0 ? feedback : ['💡 Попробуйте добавить больше конкретики о ценности для клиента']
+            };
+        }
+
+        function updateMetrics(evaluation) {
+            metrics.responses++;
+            metrics.scores.push(evaluation.score);
+            metrics.bestScore = Math.max(metrics.bestScore, evaluation.score);
+
+            const avgScore = metrics.scores.reduce((a, b) => a + b, 0) / metrics.scores.length;
+
+            document.getElementById('metric-responses').textContent = metrics.responses;
+            document.getElementById('metric-avg-score').textContent = avgScore.toFixed(1);
+            document.getElementById('metric-best-score').textContent = metrics.bestScore.toFixed(1);
+
+            // Показываем оценку последнего ответа
+            const lastResponseEl = document.getElementById('last-response');
+            lastResponseEl.style.display = 'block';
+
+            const responseGrade = document.getElementById('response-grade');
+            responseGrade.textContent = `Последний ответ: ${evaluation.grade} (${evaluation.score}/5)`;
+            responseGrade.className = 'response-grade';
+            if (evaluation.score >= 4.5) responseGrade.classList.add('grade-5');
+            else if (evaluation.score >= 4.0) responseGrade.classList.add('grade-4');
+            else if (evaluation.score >= 3.5) responseGrade.classList.add('grade-3');
+            else if (evaluation.score >= 2.5) responseGrade.classList.add('grade-2');
+            else responseGrade.classList.add('grade-1');
+
+            const responseFeedback = document.getElementById('response-feedback');
+            responseFeedback.textContent = evaluation.feedback.join(' | ');
+        }
+
+        function getSmartResponse(userMessage, evaluation) {
+            const lower = userMessage.toLowerCase();
+            const context = conversation.slice(-4).map(m => m.content.toLowerCase());
+
+            // Если ответ хороший - более позитивная реакция
+            const isGoodResponse = evaluation.score >= 4.0;
+            const isPoorResponse = evaluation.score <= 2.5;
+
+            // Специфичные ответы по сценариям
+            if (currentScenario.id === 'cold-call-it-company') {
+                if (isGoodResponse && (lower.includes('минут') || lower.includes('ценност'))) {
+                    return 'Хм, звучит интересно. У нас действительно есть проблемы с инцидентами. Что конкретно предлагаете?';
+                }
+                if (isPoorResponse) {
+                    return 'Слушайте, у меня действительно нет времени. Если коротко - в чём суть?';
+                }
+                if (lower.includes('итсм') || lower.includes('систем')) {
+                    return 'Понятно. А что это даст нам бизнесу? У нас и так Jira есть.';
+                }
+                if (lower.includes('проблем') || lower.includes('сложн')) {
+                    return 'Да, инциденты теряются, сроки нарушаем... Как вы это решаете?';
+                }
+                return 'Могу выделить 5 минут. Но только по делу. Что предлагаете?';
+            }
+
+            else if (currentScenario.id === 'demo-banking') {
+                if (isGoodResponse && (lower.includes('sla') || lower.includes('инцидент'))) {
+                    return 'Это как раз то, что нам нужно! Покажите конкретно как SLA контролируется?';
+                }
+                if (isPoorResponse) {
+                    return 'Извините, но я не понимаю как это относится к моим задачам. У нас мало времени.';
+                }
+                if (lower.includes('показ') || lower.includes('демонстрац')) {
+                    return 'Хорошо. Начнём с SLA. Как у вас настраиваются уведомления и эскалации?';
+                }
+                if (lower.includes('отчёт') || lower.includes('аналитик')) {
+                    return 'Отлично! Нам нужны отчёты для правления. Какие есть dashboard?';
+                }
+                return 'Понятно концепцию. А как это поможет с моими SLA? Покажите конкретику.';
+            }
+
+            else if (currentScenario.id === 'objection-price') {
+                if (isGoodResponse && (lower.includes('roi') || lower.includes('tc'))) {
+                    return 'Хм, логично. За какой период окупаемость вы рассчитываете? Есть кейсы подобные?';
+                }
+                if (isPoorResponse) {
+                    return 'Понимаю, но бюджет ограничен. 1C всё равно дешевле. Докажите иначе.';
+                }
+                if (lower.includes('поддержк') || lower.includes('обновлен')) {
+                    return 'Это fair point. А сколько стоит поддержка в год? Входит ли в лицензию?';
+                }
+                if (lower.includes('кей') || lower.includes('пример') || lower.includes('компани')) {
+                    return 'Покажите кейсы похожих компаний. И реальную экономию.';
+                }
+                return 'Слышу вас, но цифры нужны. Конкретно: почему ваши цены выше 1C?';
+            }
+
+            else if (currentScenario.id === 'objection-no-time') {
+                if (isGoodResponse && (lower.includes('быстр') || lower.includes('недел') || lower.includes('облачн'))) {
+                    return 'Неделя - это приемлемо. Но какие гарантии что за это время всё заработает?';
+                }
+                if (isPoorResponse) {
+                    return 'Слушайте, у нас деплой горит. Не сейчас. Может в следующем квартале?';
+                }
+                if (lower.includes('пилот') || lower.includes('попробу') || lower.includes('почек')) {
+                    return 'Пилот звучит разумно. Но на какой функционал? Нам нужно всё или ничего.';
+                }
+                return 'Не понимаю как это быстро. У нас сложная инфраструктура.';
+            }
+
+            else if (currentScenario.id === 'objection-competitor') {
+                if (isGoodResponse && (lower.includes('отлич') || lower.includes('лучше'))) {
+                    return 'Интересно. А миграция данных? У нас там годы накоплений в Service Now.';
+                }
+                if (isPoorResponse) {
+                    return 'Звучит как очередной sales pitch. У нас уже есть система, она работает. Зачем менять?';
+                }
+                if (lower.includes('миграц') || lower.includes('данн')) {
+                    return 'Это важно. А сколько длится миграция? Это просто или болезненно?';
+                }
+                if (lower.includes('недоволь') || lower.includes('жалоб')) {
+                    return 'Да, пользователи жалуются на сложность. Но это привычка. Вы проще?';
+                }
+                return 'Понятно, но почему это лучше чем то что у нас уже есть и работает?';
+            }
+
+            else if (currentScenario.id === 'closing-proposal') {
+                if (isGoodResponse && (lower.includes('кп') || lower.includes('встреч'))) {
+                    return 'Отлично! Давайте на следующей неделе. Вторник в 14:00 подойдет? И что включить в КП?';
+                }
+                if (isPoorResponse) {
+                    return 'Понимаю. Я так и думал что это сложно. Когда будем готовы discuss по существу?';
+                }
+                if (lower.includes('срок') || lower.includes('времен') || lower.includes('дней')) {
+                    return 'Хорошо. Давайте так - КП к среде, обсудим в пятницу. Условия приемлемы?';
+                }
+                return 'Нужно согласовать. Подготовьте КП с нашими требованиями. Когда будете готовы?';
+            }
+
+            else if (currentScenario.id === 'closing-deadline') {
+                if (isGoodResponse && (lower.includes('быстр') || lower.includes('готов') || lower.includes('срок'))) {
+                    return 'Отлично! У нас до пятницы. Успеете подготовить предложение? Цены фиксированные?';
+                }
+                if (isPoorResponse) {
+                    return 'Тогда не успеваем. Нам нужно решение до пятницы. Если не вы - то конкуренты.';
+                }
+                if (lower.includes('цена') || lower.includes('бюджет') || lower.includes('диапазон')) {
+                    return 'Бюджет около 2 млн руб в год. Укладываетесь? Если да - готово предложение к среде.';
+                }
+                return 'У нас до пятницы. Можете быстро? Если да - discuss. Если нет - в следующем году.';
+            }
+
+            // Универсальные ответы в зависимости от качества ответа
+            if (isGoodResponse) {
+                const goodResponses = [
+                    'Звучит перспективно. Расскажите подробнее.',
+                    'Понимаю. Что конкретно предлагаете дальше?',
+                    'Хорошо, это имеет смысл. Продолжайте.',
+                    'Интересно! Какие ещё преимущества?'
+                ];
+                return goodResponses[Math.floor(Math.random() * goodResponses.length)];
+            }
+
+            if (isPoorResponse) {
+                const poorResponses = [
+                    'Понимаю, но не хватает конкретики. В чём реальная ценность?',
+                    'Слышу вас, но как это относится к моим задачам?',
+                    'Нужно больше подробностей. Конкретно пожалуйста.',
+                    'Звучит как sales pitch. А в чём реальная польза для меня?'
+                ];
+                return poorResponses[Math.floor(Math.random() * poorResponses.length)];
+            }
+
+            // Нейтральные ответы
+            const neutralResponses = [
+                'Понимаю. Что дальше?',
+                'Хорошо. Продолжайте.',
+                'А как это соотносится с моими задачами?',
+                'Интересно. Подробнее?'
+            ];
+            return neutralResponses[Math.floor(Math.random() * neutralResponses.length)];
+        }
+
+        function backToScenarios() {
+            document.getElementById('simulation').classList.remove('active');
+            document.querySelector('.hero').style.display = 'block';
+            document.getElementById('scenarios').style.display = 'none';
+
+            currentScenario = null;
+            conversation = [];
         }
 
         // ===============================
         // ГОЛОС
         // ===============================
         function toggleVoice() {
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (!SpeechRecognition) {
                 alert('Голосовой ввод не поддерживается. Используйте текст.');
                 return;
             }
@@ -535,8 +835,6 @@ Response:`,
         }
 
         function startRecording() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
             speechRecognition = new SpeechRecognition();
             speechRecognition.lang = 'ru-RU';
             speechRecognition.continuous = false;
@@ -544,21 +842,26 @@ Response:`,
 
             speechRecognition.onstart = () => {
                 isRecording = true;
-                document.getElementById('recording-indicator').style.display = 'flex';
-                document.getElementById('voice-icon').textContent = '⏹';
+                document.getElementById('recording').classList.add('active');
+                document.getElementById('voice-btn').textContent = '⏹';
             };
 
             speechRecognition.onend = () => {
                 isRecording = false;
-                document.getElementById('recording-indicator').style.display = 'none';
-                document.getElementById('voice-icon').textContent = '🎤';
+                document.getElementById('recording').classList.remove('active');
+                document.getElementById('voice-btn').textContent = '🎤';
             };
 
             speechRecognition.onresult = (event) => {
                 const text = event.results[0][0].transcript;
-                document.getElementById('user-input').value = text;
-                // Автоматически отправляем
+                document.getElementById('chat-input').value = text;
                 setTimeout(() => sendMessage(), 500);
+            };
+
+            speechRecognition.onerror = (error) => {
+                console.error('Speech error:', error);
+                isRecording = false;
+                stopRecording();
             };
 
             speechRecognition.start();
@@ -570,23 +873,40 @@ Response:`,
             }
         }
 
-        function endSimulation() {
-            const score = Math.floor(60 + Math.random() * 30);
+        // Привязка голосовой кнопки (безопасно)
+        document.addEventListener('DOMContentLoaded', function() {
+            const voiceBtn = document.getElementById('voice-btn');
+            if (voiceBtn) {
+                voiceBtn.onclick = toggleVoice;
+            }
+        });
 
-            document.getElementById('final-score').textContent = score + '%';
+        // Инициализация с проверкой
+        console.log('ITSM365 Sales Trainer загружен');
 
-            const feedback = score >= 80 ? 'Отличная работа! Продолжайте практиковаться.' :
-                           score >= 60 ? 'Хорошая работа. Обратите внимание на детали.' :
-                           'Требуется больше практики. Рекомендую повторить сценарии.';
+        // Проверка что все элементы доступны
+        function checkElements() {
+            const requiredIds = ['scenarios', 'simulation', 'chat-input', 'voice-btn'];
+            const missing = [];
 
-            document.getElementById('feedback-text').textContent = feedback;
-            showView('results');
+            requiredIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) missing.push(id);
+            });
+
+            if (missing.length > 0) {
+                console.error('Missing elements:', missing);
+            } else {
+                console.log('✅ All required elements found');
+            }
         }
 
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('ITSM365 Sales Trainer с умными сценариями загружен');
-        });
+        // Проверка при загрузке
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', checkElements);
+        } else {
+            checkElements();
+        }
     </script>
 </body>
 </html>
