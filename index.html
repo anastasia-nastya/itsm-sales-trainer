@@ -7,10 +7,11 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
             background: #F5F7FA;
             color: #1A1A1A;
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
         .hero { text-align: center; margin-bottom: 60px; }
@@ -19,22 +20,25 @@
         .cta-button {
             background: #FF6B35; color: white; border: none; padding: 15px 40px;
             font-size: 1.1rem; font-weight: 600; border-radius: 8px; cursor: pointer;
-            transition: background 0.2s;
+            -webkit-appearance: none;
+            transition: all 0.2s ease;
         }
-        .cta-button:hover { background: #e55a2b; }
+        .cta-button:hover { background: #e55a2b; transform: scale(1.02); }
+        .cta-button:active { transform: scale(0.98); }
         .scenario-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
         .scenario-card {
             background: white; border: 1px solid #E5E7EB; border-radius: 12px; padding: 25px;
-            cursor: pointer; transition: all 0.2s;
+            cursor: pointer; transition: all 0.2s ease;
         }
-        .scenario-card:hover { border-color: #0066CC; transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .scenario-card:hover { border-color: #0066CC; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,102,204,0.15); }
         .scenario-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
         .scenario-desc { font-size: 0.9rem; color: #6B7280; margin-bottom: 15px; }
         .scenario-meta { font-size: 0.8rem; color: #6B7280; margin-bottom: 15px; }
         .scenario-button {
             width: 100%; padding: 12px; background: #0066CC; color: white;
             border: none; border-radius: 8px; font-weight: 600; cursor: pointer;
-            transition: background 0.2s;
+            -webkit-appearance: none;
+            transition: background 0.2s ease;
         }
         .scenario-button:hover { background: #0056b3; }
         .simulation { display: none; }
@@ -54,6 +58,7 @@
         .chat-messages {
             min-height: 400px; max-height: 400px; overflow-y: auto;
             padding: 20px; background: #F8FAFC;
+            -webkit-overflow-scrolling: touch;
         }
         .message { margin-bottom: 20px; }
         .message-sender { font-size: 0.75rem; color: #6B7280; margin-bottom: 5px; }
@@ -68,32 +73,28 @@
         .chat-input {
             width: 100%; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px;
             resize: none; font-family: inherit;
+            -webkit-appearance: none;
         }
         .actions { display: flex; gap: 10px; margin-top: 10px; }
         .voice-btn {
             width: 40px; height: 40px; border-radius: 50%; border: 1px solid #E5E7EB;
             background: white; cursor: pointer; font-size: 1.2rem;
+            -webkit-appearance: none;
         }
         .send-btn {
             padding: 10px 24px; background: #0066CC; color: white;
             border: none; border-radius: 8px; font-weight: 600; cursor: pointer;
+            -webkit-appearance: none;
+            transition: background 0.2s ease;
         }
         .send-btn:hover { background: #0056b3; }
         .back-btn {
             padding: 8px 16px; background: #F5F7FA; border: 1px solid #E5E7EB;
             border-radius: 6px; cursor: pointer;
+            -webkit-appearance: none;
+            transition: background 0.2s ease;
         }
         .back-btn:hover { background: #e5e7eb; }
-        .recording {
-            position: fixed; bottom: 20px; right: 20px; background: #FF6B35;
-            color: white; padding: 12px 20px; border-radius: 30px; display: none;
-        }
-        .recording.active { display: flex; align-items: center; gap: 10px; }
-        .recording-dot {
-            width: 10px; height: 10px; background: white; border-radius: 50%;
-            animation: blink 1s infinite;
-        }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .metrics-panel {
             background: white; border: 1px solid #E5E7EB; border-radius: 8px;
             padding: 15px; margin-bottom: 20px;
@@ -104,11 +105,6 @@
         .metric-label { font-size: 0.75rem; color: #6B7280; margin-top: 5px; }
         .last-response { margin-top: 15px; padding-top: 15px; border-top: 1px solid #E5E7EB; }
         .response-grade { font-weight: 600; margin-bottom: 5px; }
-        .grade-5 { color: #10B981; }
-        .grade-4 { color: #3B82F6; }
-        .grade-3 { color: #F59E0B; }
-        .grade-2 { color: #EF4444; }
-        .grade-1 { color: #DC2626; }
         .feedback-tip { font-size: 0.9rem; color: #6B7280; }
     </style>
 </head>
@@ -171,15 +167,16 @@
                     </div>
                 </div>
             </div>
-
-            <div id="recording" class="recording">
-                <div class="recording-dot"></div>
-                <span>Слушаю...</span>
-            </div>
         </div>
     </div>
 
     <script>
+        // Отладочная информация
+        console.log('=== ITSM365 Sales Trainer ===');
+        console.log('Browser:', navigator.userAgent);
+        console.log('Platform:', navigator.platform);
+        console.log('Document ready state:', document.readyState);
+
         // Данные сценариев
         const scenarios = [
             {
@@ -188,11 +185,7 @@
                 category: 'cold-call',
                 difficulty: 'intermediate',
                 duration: 10,
-                client: {
-                    name: 'Алексей',
-                    role: 'IT Директор',
-                    company: 'IT компания "Инфotech"'
-                },
+                client: { name: 'Алексей', role: 'IT Директор', company: 'IT компания "Инфotech"' },
                 greeting: 'Алло? Слушаю, у меня мало времени. Кто звонит?'
             },
             {
@@ -201,11 +194,7 @@
                 category: 'demo',
                 difficulty: 'advanced',
                 duration: 15,
-                client: {
-                    name: 'Иван',
-                    role: 'CIO',
-                    company: 'Банк "Солид"'
-                },
+                client: { name: 'Иван', role: 'CIO', company: 'Банк "Солид"' },
                 greeting: 'Добрый день! У нас 15 минут. Что предлагаем показать?'
             },
             {
@@ -214,11 +203,7 @@
                 category: 'objections',
                 difficulty: 'intermediate',
                 duration: 12,
-                client: {
-                    name: 'Дмитрий',
-                    role: 'IT Manager',
-                    company: 'Торговая сеть'
-                },
+                client: { name: 'Дмитрий', role: 'IT Manager', company: 'Торговая сеть' },
                 greeting: 'Посмотрели демо, всё неплохо. Но у вас цены выше чем у 1C. Почему нам платить больше?'
             },
             {
@@ -227,11 +212,7 @@
                 category: 'closing',
                 difficulty: 'intermediate',
                 duration: 8,
-                client: {
-                    name: 'Елена',
-                    role: 'Руководитель поддержки',
-                    company: 'Страховая компания'
-                },
+                client: { name: 'Елена', role: 'Руководитель поддержки', company: 'Страховая компания' },
                 greeting: 'Спасибо за демо, система интересная. Нужно согласовать бюджет. Что делать дальше?'
             }
         ];
@@ -240,147 +221,164 @@
         let currentScenario = null;
         let conversation = [];
         let metrics = { responses: 0, scores: [], bestScore: 0 };
-        let isRecording = false;
-        let recognition = null;
 
-        // Элементы DOM
-        const elements = {
-            hero: document.getElementById('hero'),
-            scenarios: document.getElementById('scenarios'),
-            scenarioGrid: document.getElementById('scenarioGrid'),
-            simulation: document.getElementById('simulation'),
-            simTitle: document.getElementById('simTitle'),
-            clientName: document.getElementById('clientName'),
-            clientRole: document.getElementById('clientRole'),
-            chatMessages: document.getElementById('chatMessages'),
-            chatInput: document.getElementById('chatInput'),
-            metricResponses: document.getElementById('metricResponses'),
-            metricAvgScore: document.getElementById('metricAvgScore'),
-            metricBestScore: document.getElementById('metricBestScore'),
-            lastResponse: document.getElementById('lastResponse'),
-            responseGrade: document.getElementById('responseGrade'),
-            responseFeedback: document.getElementById('responseFeedback')
+        // Глобальные функции (для Safari)
+        window.showScenarios = function() {
+            console.log('showScenarios called');
+            try {
+                document.getElementById('hero').style.display = 'none';
+                document.getElementById('scenarios').style.display = 'block';
+                renderScenarios();
+                console.log('showScenarios completed');
+            } catch(e) {
+                console.error('showScenarios error:', e);
+                alert('Ошибка: ' + e.message);
+            }
         };
 
-        // Функции
-        function showScenarios() {
-            console.log('showScenarios called');
-            elements.hero.style.display = 'none';
-            elements.scenarios.style.display = 'block';
-            renderScenarios();
-        }
+        window.renderScenarios = function() {
+            console.log('renderScenarios called');
+            try {
+                const grid = document.getElementById('scenarioGrid');
+                grid.innerHTML = '';
 
-        function renderScenarios() {
-            elements.scenarioGrid.innerHTML = '';
-
-            const categories = {
-                'cold-call': '📞 Холодные звонки',
-                'demo': '🎯 Демонстрации',
-                'objections': '🛡️ Возражения',
-                'closing': '💰 Закрытие'
-            };
-
-            let currentCat = null;
-
-            scenarios.forEach(scenario => {
-                if (scenario.category !== currentCat) {
-                    currentCat = scenario.category;
-                    const header = document.createElement('h3');
-                    header.style.cssText = 'color: #1A1A1A; margin: 30px 0 15px 0;';
-                    header.textContent = categories[scenario.category];
-                    elements.scenarioGrid.appendChild(header);
-                }
-
-                const card = document.createElement('div');
-                card.className = 'scenario-card';
-
-                const diffLabel = scenario.difficulty === 'advanced' ? 'Продвинутый' :
-                                  scenario.difficulty === 'intermediate' ? 'Средний' : 'Начальный';
-
-                card.innerHTML = `
-                    <div class="scenario-meta">📋 ${diffLabel} • ${scenario.duration} мин</div>
-                    <h4 class="scenario-title">${scenario.title}</h4>
-                    <p class="scenario-desc">${scenario.client.name} — ${scenario.client.role}</p>
-                    <button class="scenario-button">Начать тренировку →</button>
-                `;
-
-                const button = card.querySelector('.scenario-button');
-                button.onclick = (e) => {
-                    e.stopPropagation();
-                    startSimulation(scenario.id);
+                const categories = {
+                    'cold-call': '📞 Холодные звонки',
+                    'demo': '🎯 Демонстрации',
+                    'objections': '🛡️ Возражения',
+                    'closing': '💰 Закрытие'
                 };
 
-                card.onclick = () => startSimulation(scenario.id);
+                let currentCat = null;
 
-                elements.scenarioGrid.appendChild(card);
-            });
-        }
+                scenarios.forEach(scenario => {
+                    if (scenario.category !== currentCat) {
+                        currentCat = scenario.category;
+                        const header = document.createElement('h3');
+                        header.style.cssText = 'color: #1A1A1A; margin: 30px 0 15px 0;';
+                        header.textContent = categories[scenario.category];
+                        grid.appendChild(header);
+                    }
 
-        function startSimulation(scenarioId) {
-            const scenario = scenarios.find(s => s.id === scenarioId);
-            if (!scenario) return;
+                    const card = document.createElement('div');
+                    card.className = 'scenario-card';
 
-            currentScenario = scenario;
-            conversation = [];
-            metrics = { responses: 0, scores: [], bestScore: 0 };
+                    const diffLabel = scenario.difficulty === 'advanced' ? 'Продвинутый' :
+                                      scenario.difficulty === 'intermediate' ? 'Средний' : 'Начальный';
 
-            // Показываем симуляцию
-            elements.hero.style.display = 'none';
-            elements.scenarios.style.display = 'none';
-            elements.simulation.classList.add('active');
+                    card.innerHTML = `
+                        <div class="scenario-meta">📋 ${diffLabel} • ${scenario.duration} мин</div>
+                        <h4 class="scenario-title">${scenario.title}</h4>
+                        <p class="scenario-desc">${scenario.client.name} — ${scenario.client.role}</p>
+                        <button class="scenario-button">Начать тренировку →</button>
+                    `;
 
-            // Заполняем информацию
-            elements.simTitle.textContent = scenario.title;
-            elements.clientName.textContent = scenario.client.name;
-            elements.clientRole.textContent = scenario.client.role + ', ' + scenario.client.company;
+                    const button = card.querySelector('.scenario-button');
+                    button.onclick = (function(scenarioId) {
+                        return function(e) {
+                            e.stopPropagation();
+                            window.startSimulation(scenarioId);
+                        };
+                    })(scenario.id);
 
-            // Сбрасываем метрики
-            elements.metricResponses.textContent = '0';
-            elements.metricAvgScore.textContent = '-';
-            elements.metricBestScore.textContent = '-';
-            elements.lastResponse.style.display = 'none';
+                    card.onclick = (function(scenarioId) {
+                        return function() {
+                            window.startSimulation(scenarioId);
+                        };
+                    })(scenario.id);
 
-            // Очищаем чат
-            elements.chatMessages.innerHTML = '';
+                    grid.appendChild(card);
+                });
+                console.log('renderScenarios completed');
+            } catch(e) {
+                console.error('renderScenarios error:', e);
+                alert('Ошибка: ' + e.message);
+            }
+        };
 
-            // Приветствие
-            setTimeout(() => {
-                addMessage('assistant', scenario.greeting);
-            }, 500);
-        }
+        window.startSimulation = function(scenarioId) {
+            console.log('startSimulation called with:', scenarioId);
+            try {
+                const scenario = scenarios.find(function(s) { return s.id === scenarioId; });
+                if (!scenario) {
+                    console.error('Scenario not found:', scenarioId);
+                    alert('Сценарий не найден!');
+                    return;
+                }
 
-        function addMessage(role, content) {
-            const msg = document.createElement('div');
-            msg.className = `message ${role}`;
-            msg.innerHTML = `
-                <div class="message-sender">${role === 'user' ? 'Вы' : currentScenario.client.name}</div>
-                <div class="message-content">${content}</div>
-            `;
-            elements.chatMessages.appendChild(msg);
-            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
-        }
+                currentScenario = scenario;
+                conversation = [];
+                metrics = { responses: 0, scores: [], bestScore: 0 };
 
-        function sendMessage() {
-            const text = elements.chatInput.value.trim();
-            if (!text) return;
+                document.getElementById('hero').style.display = 'none';
+                document.getElementById('scenarios').style.display = 'none';
+                document.getElementById('simulation').classList.add('active');
 
-            addMessage('user', text);
-            conversation.push({role: 'user', content: text});
-            elements.chatInput.value = '';
+                document.getElementById('simTitle').textContent = scenario.title;
+                document.getElementById('clientName').textContent = scenario.client.name;
+                document.getElementById('clientRole').textContent = scenario.client.role + ', ' + scenario.client.company;
 
-            // Оценка ответа
-            const evaluation = evaluateResponse(text);
-            updateMetrics(evaluation);
+                document.getElementById('metricResponses').textContent = '0';
+                document.getElementById('metricAvgScore').textContent = '-';
+                document.getElementById('metricBestScore').textContent = '-';
+                document.getElementById('lastResponse').style.display = 'none';
 
-            // AI ответ
-            const response = getResponse(text, evaluation);
-            setTimeout(() => {
-                addMessage('assistant', response);
-                conversation.push({role: 'assistant', content: response});
-            }, 500);
-        }
+                document.getElementById('chatMessages').innerHTML = '';
 
-        function evaluateResponse(text) {
+                setTimeout(function() {
+                    window.addMessage('assistant', scenario.greeting);
+                }, 500);
+
+                console.log('startSimulation completed');
+            } catch(e) {
+                console.error('startSimulation error:', e);
+                alert('Ошибка: ' + e.message);
+            }
+        };
+
+        window.addMessage = function(role, content) {
+            try {
+                const chat = document.getElementById('chatMessages');
+                const msg = document.createElement('div');
+                msg.className = 'message ' + role;
+                msg.innerHTML = 
+                    '<div class="message-sender">' + (role === 'user' ? 'Вы' : currentScenario.client.name) + '</div>' +
+                    '<div class="message-content">' + content + '</div>';
+                chat.appendChild(msg);
+                chat.scrollTop = chat.scrollHeight;
+            } catch(e) {
+                console.error('addMessage error:', e);
+            }
+        };
+
+        window.sendMessage = function() {
+            console.log('sendMessage called');
+            try {
+                const input = document.getElementById('chatInput');
+                const text = input.value.trim();
+                if (!text) return;
+
+                window.addMessage('user', text);
+                conversation.push({role: 'user', content: text});
+                input.value = '';
+
+                const evaluation = window.evaluateResponse(text);
+                window.updateMetrics(evaluation);
+
+                const response = window.getResponse(text, evaluation);
+                setTimeout(function() {
+                    window.addMessage('assistant', response);
+                    conversation.push({role: 'assistant', content: response});
+                }, 500);
+
+                console.log('sendMessage completed');
+            } catch(e) {
+                console.error('sendMessage error:', e);
+                alert('Ошибка: ' + e.message);
+            }
+        };
+
+        window.evaluateResponse = function(text) {
             const lower = text.toLowerCase();
             let score = 3;
             let feedback = [];
@@ -402,26 +400,30 @@
 
             let grade = score >= 4 ? '✅ Отлично' : score >= 3 ? '👍 Хорошо' : '⚠️ Нужно улучшить';
 
-            return { score, grade, feedback: feedback.length > 0 ? feedback : ['Нормально'] };
-        }
+            return { score: score, grade: grade, feedback: feedback.length > 0 ? feedback : ['Нормально'] };
+        };
 
-        function updateMetrics(evaluation) {
-            metrics.responses++;
-            metrics.scores.push(evaluation.score);
-            metrics.bestScore = Math.max(metrics.bestScore, evaluation.score);
+        window.updateMetrics = function(evaluation) {
+            try {
+                metrics.responses++;
+                metrics.scores.push(evaluation.score);
+                metrics.bestScore = Math.max(metrics.bestScore, evaluation.score);
 
-            const avg = metrics.scores.reduce((a, b) => a + b, 0) / metrics.scores.length;
+                const avg = metrics.scores.reduce(function(a, b) { return a + b; }, 0) / metrics.scores.length;
 
-            elements.metricResponses.textContent = metrics.responses;
-            elements.metricAvgScore.textContent = avg.toFixed(1);
-            elements.metricBestScore.textContent = metrics.bestScore.toFixed(1);
+                document.getElementById('metricResponses').textContent = metrics.responses;
+                document.getElementById('metricAvgScore').textContent = avg.toFixed(1);
+                document.getElementById('metricBestScore').textContent = metrics.bestScore.toFixed(1);
 
-            elements.lastResponse.style.display = 'block';
-            elements.responseGrade.textContent = `Последний ответ: ${evaluation.grade} (${evaluation.score}/5)`;
-            elements.responseFeedback.textContent = evaluation.feedback.join(' | ');
-        }
+                document.getElementById('lastResponse').style.display = 'block';
+                document.getElementById('responseGrade').textContent = 'Последний ответ: ' + evaluation.grade + ' (' + evaluation.score + '/5)';
+                document.getElementById('responseFeedback').textContent = evaluation.feedback.join(' | ');
+            } catch(e) {
+                console.error('updateMetrics error:', e);
+            }
+        };
 
-        function getResponse(text, evaluation) {
+        window.getResponse = function(text, evaluation) {
             const lower = text.toLowerCase();
 
             if (currentScenario.id === 'cold-call') {
@@ -446,81 +448,73 @@
             }
 
             return 'Понятно. Что дальше?';
-        }
+        };
 
-        function backToScenarios() {
-            elements.simulation.classList.remove('active');
-            elements.hero.style.display = 'block';
-            elements.scenarios.style.display = 'none';
-            currentScenario = null;
-            conversation = [];
-        }
-
-        function toggleVoice() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-            if (!SpeechRecognition) {
-                alert('Голосовой ввод не поддерживается');
-                return;
+        window.backToScenarios = function() {
+            console.log('backToScenarios called');
+            try {
+                document.getElementById('simulation').classList.remove('active');
+                document.getElementById('hero').style.display = 'block';
+                document.getElementById('scenarios').style.display = 'none';
+                currentScenario = null;
+                conversation = [];
+            } catch(e) {
+                console.error('backToScenarios error:', e);
             }
-
-            if (isRecording) {
-                if (recognition) recognition.stop();
-            } else {
-                recognition = new SpeechRecognition();
-                recognition.lang = 'ru-RU';
-                recognition.continuous = false;
-
-                recognition.onstart = () => {
-                    isRecording = true;
-                    document.getElementById('recording').classList.add('active');
-                    document.getElementById('voiceButton').textContent = '⏹';
-                };
-
-                recognition.onend = () => {
-                    isRecording = false;
-                    document.getElementById('recording').classList.remove('active');
-                    document.getElementById('voiceButton').textContent = '🎤';
-                };
-
-                recognition.onresult = (event) => {
-                    const text = event.results[0][0].transcript;
-                    elements.chatInput.value = text;
-                };
-
-                recognition.start();
-            }
-        }
+        };
 
         // Инициализация
         function init() {
-            console.log('Initializing...');
+            console.log('init called');
 
-            // Привязка событий
-            document.getElementById('startButton').onclick = showScenarios;
-            document.getElementById('backButton').onclick = backToScenarios;
-            document.getElementById('sendButton').onclick = sendMessage;
-            document.getElementById('voiceButton').onclick = toggleVoice;
+            try {
+                // Проверка элементов
+                const startBtn = document.getElementById('startButton');
+                console.log('startButton element:', startBtn);
 
-            // Enter для отправки
-            elements.chatInput.onkeydown = (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
+                if (!startBtn) {
+                    console.error('startButton NOT FOUND!');
+                    alert('Ошибка: кнопка не найдена!');
+                    return;
                 }
-            };
 
-            console.log('Initialized successfully');
+                // Привязка через onclick
+                startBtn.onclick = window.showScenarios;
+                console.log('startButton.onclick assigned');
+
+                document.getElementById('backButton').onclick = window.backToScenarios;
+                document.getElementById('sendButton').onclick = window.sendMessage;
+
+                const chatInput = document.getElementById('chatInput');
+                chatInput.onkeydown = function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        window.sendMessage();
+                    }
+                };
+
+                console.log('=== INIT COMPLETE ===');
+                console.log('Available functions:', {
+                    showScenarios: typeof window.showScenarios,
+                    startSimulation: typeof window.startSimulation,
+                    sendMessage: typeof window.sendMessage,
+                    backToScenarios: typeof window.backToScenarios
+                });
+
+            } catch(e) {
+                console.error('init error:', e);
+                alert('Ошибка инициализации: ' + e.message);
+            }
         }
 
-        // Запуск
+        // Запуск инициализации
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
         } else {
             init();
         }
 
-        console.log('App loaded');
+        console.log('=== SCRIPT LOADED ===');
     </script>
 </body>
 </html>
